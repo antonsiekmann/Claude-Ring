@@ -1,0 +1,11 @@
+.DS_Store
+.build/
+.swiftpm/
+xcuserdata/
+DerivedData/
+build/
+*.xcuserstate
+
+# Local tool state (Claude Code, Impeccable)
+.claude/
+.impeccable/
