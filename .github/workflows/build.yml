@@ -54,15 +54,14 @@ jobs:
             exit 1
           fi
           VERSION="$VERSION" BUILD_NUMBER="$GITHUB_RUN_NUMBER" scripts/make-dmg.sh
-          # A name without version, so releases/latest/download/ClaudeRing.dmg
-          # always points to the newest release.
-          cp "build/dist/ClaudeRing-$VERSION.dmg" build/dist/ClaudeRing.dmg
+          # The same name in every release, so releases/latest/download/ClaudeRing.dmg
+          # always points to the newest one.
+          mv "build/dist/ClaudeRing-$VERSION.dmg" build/dist/ClaudeRing.dmg
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
       - name: Publish the release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" \
-            "build/dist/ClaudeRing-$VERSION.dmg" build/dist/ClaudeRing.dmg \
+          gh release create "$GITHUB_REF_NAME" build/dist/ClaudeRing.dmg \
             --title "Claude Ring $VERSION" --generate-notes --verify-tag
