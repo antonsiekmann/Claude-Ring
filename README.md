@@ -105,13 +105,18 @@ Updates); ein Klick darauf öffnet die Einstellungen. Geladen wird erst nach ein
 1. lädt `ClaudeRing.dmg` aus dem Release und vergleicht sie mit der SHA-256-Prüfsumme, die GitHub
    für die Datei angibt,
 2. hängt das Disk-Image unsichtbar ein und prüft die App darin: gleiche Bundle-ID, angekündigte
-   Version, gültige Signatur, läuft mit dieser macOS-Version,
+   Version, intakte Signatur, läuft mit dieser macOS-Version,
 3. ersetzt sich in einem Schritt durch die neue App, beendet sich und startet die neue Version.
 
 Einstellungen, Hooks und Anmeldeobjekt bleiben dabei unverändert. Schlägt ein Schritt fehl, bleibt
 die alte App, wie sie war. Selbst ersetzen kann sich nur eine App in „Programme“ (`/Applications`
 oder `~/Applications`), in dem du schreiben darfst; sonst öffnet „Herunterladen …“ die Release-Seite.
 „Später“ blendet eine Version im Popover aus, bis eine neuere erscheint.
+
+Vertrauensanker ist GitHub, wie beim Download von Hand: Die App ist nur ad-hoc signiert, ohne
+Entwickler-Zertifikat. Prüfsumme und Signaturprüfung erkennen beschädigte oder unterwegs veränderte
+Dateien, aber nicht, wer das Release gebaut hat. Ein Release aus einem übernommenen GitHub-Konto
+würde also ebenfalls angeboten.
 
 ## Vollständig entfernen
 

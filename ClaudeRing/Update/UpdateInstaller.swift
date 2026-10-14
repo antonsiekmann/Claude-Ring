@@ -38,10 +38,15 @@ enum UpdateInstallError: LocalizedError {
 /// installed one.
 ///
 /// The DMG must match the SHA-256 that GitHub lists for it; the app inside
-/// must have the same bundle identifier, the announced version, a valid
+/// must have the same bundle identifier, the announced version, an intact
 /// signature and run on this macOS. Only then is the old bundle swapped out,
 /// in one step on the same volume. The running process keeps its old files
 /// until it quits.
+///
+/// The app is ad-hoc signed, so there is no signer to pin: its designated
+/// requirement is its own code hash, which changes with every build. The
+/// signature check catches damaged or altered files; who built the release
+/// rests on GitHub, as with a manual download.
 struct UpdateInstaller: Sendable {
     /// The app's name in the DMG; the installed copy may be named differently.
     static let appNameInImage = "Claude Ring.app"
