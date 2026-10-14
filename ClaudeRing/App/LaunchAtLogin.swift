@@ -11,11 +11,7 @@ final class LaunchAtLogin {
 
     /// Login items register the path the app runs from. Only offer them for an
     /// installed copy, not for a build in DerivedData that moves on every build.
-    let isAvailable: Bool = {
-        let path = Bundle.main.bundleURL.path
-        let home = FileManager.default.homeDirectoryForCurrentUser.path
-        return path.hasPrefix("/Applications/") || path.hasPrefix(home + "/Applications/")
-    }()
+    let isAvailable = AppEnvironment.isInstalled()
 
     var isEnabled: Bool { status == .enabled }
     var requiresApproval: Bool { status == .requiresApproval }

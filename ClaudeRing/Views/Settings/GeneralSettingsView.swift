@@ -4,6 +4,7 @@ struct GeneralSettingsView: View {
     @Bindable var settings: AppSettings
     let launchAtLogin: LaunchAtLogin
     let uninstaller: AppUninstaller
+    let updater: AppUpdater
 
     var body: some View {
         Form {
@@ -25,6 +26,16 @@ struct GeneralSettingsView: View {
             }
 
             Section {
+                Toggle("Automatisch nach Updates suchen", isOn: $settings.checksForUpdates)
+                UpdateRows(updater: updater)
+            } header: {
+                Text("Updates")
+            } footer: {
+                Text("Die App fragt kurz nach dem Start und dann einmal am Tag bei GitHub nach einer neuen Version. Geladen wird erst nach einem Klick auf „Installieren“. Die App prüft den Download gegen die Prüfsumme auf GitHub, ersetzt sich und startet neu; die Einstellungen bleiben erhalten.")
+                    .foregroundStyle(.secondary)
+            }
+
+            Section {
                 UninstallRow(uninstaller: uninstaller)
             } header: {
                 Text("Entfernen")
@@ -35,6 +46,55 @@ struct GeneralSettingsView: View {
         }
         .formStyle(.grouped)
         .onAppear { launchAtLogin.refresh() }
+    }
+}
+
+private struct UpdateRows: View {
+    let updater: AppUpdater
+
+    var body: some View {
+        LabeledContent("Installierte Version", value: updater.currentVersion?.description ?? "–")
+        if let release = updater.availableRelease {
+            LabeledContent {
+                if updater.isInstalling {
+                    ProgressView()
+                        .controlSize(.small)
+                } else {
+                    Button(updater.canInstall ? "Installieren und neu starten" : "Herunterladen …") { updater.install() }
+                        .buttonStyle(.borderedProminent)
+                }
+            } label: {
+                if updater.isInstalling {
+                    Text("Version \(release.version.description) wird installiert …")
+                } else {
+                    Text("Version \(release.version.description) ist verfügbar")
+                }
+                Link("Was ist neu?", destination: release.pageURL)
+            }
+            if !updater.canInstall {
+                Text("Selbst ersetzen kann sich nur eine App im Ordner „Programme“, in dem du schreiben darfst. „Herunterladen …“ öffnet die Seite der neuen Version.")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+            }
+        } else {
+            LabeledContent {
+                Button("Jetzt suchen") { updater.checkNow() }
+                    .disabled(updater.isChecking)
+            } label: {
+                if updater.isChecking {
+                    Text("Suche nach Updates …")
+                } else if let lastChecked = updater.lastChecked {
+                    Text("Claude Ring ist aktuell")
+                    Text("Geprüft \(lastChecked, format: .relative(presentation: .named))")
+                } else {
+                    Text("Noch nicht geprüft")
+                }
+            }
+        }
+        if let error = updater.lastError {
+            Label(error, systemImage: "exclamationmark.triangle")
+                .foregroundStyle(.orange)
+        }
     }
 }
 

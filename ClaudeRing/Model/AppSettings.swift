@@ -74,6 +74,9 @@ final class AppSettings {
     var refreshInterval: RefreshInterval {
         didSet { defaults.set(refreshInterval.rawValue, forKey: Key.refreshInterval) }
     }
+    var checksForUpdates: Bool {
+        didSet { defaults.set(checksForUpdates, forKey: Key.checksForUpdates) }
+    }
 
     // MARK: Menu bar
     var menuBarStyle: MenuBarStyle {
@@ -121,12 +124,16 @@ final class AppSettings {
     var notifiesOnSessionReset: Bool {
         didSet { defaults.set(notifiesOnSessionReset, forKey: Key.notifiesOnSessionReset) }
     }
+    var notifiesAboutUpdates: Bool {
+        didSet { defaults.set(notifiesAboutUpdates, forKey: Key.notifiesAboutUpdates) }
+    }
 
     @ObservationIgnored private let defaults: UserDefaults
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         refreshInterval = RefreshInterval(rawValue: defaults.integer(forKey: Key.refreshInterval)) ?? .minutes5
+        checksForUpdates = defaults.bool(forKey: Key.checksForUpdates, default: true)
         menuBarStyle = defaults.string(forKey: Key.menuBarStyle).flatMap(MenuBarStyle.init) ?? .ring
         menuBarLimit = defaults.string(forKey: Key.menuBarLimit).flatMap(MenuBarLimit.init) ?? .session
         menuBarValue = defaults.string(forKey: Key.menuBarValue).flatMap(MenuBarValue.init) ?? .remaining
@@ -140,10 +147,12 @@ final class AppSettings {
         criticalThreshold = defaults.object(forKey: Key.criticalThreshold) as? Int ?? 95
         notifiesForWeekly = defaults.bool(forKey: Key.notifiesForWeekly, default: true)
         notifiesOnSessionReset = defaults.bool(forKey: Key.notifiesOnSessionReset, default: false)
+        notifiesAboutUpdates = defaults.bool(forKey: Key.notifiesAboutUpdates, default: true)
     }
 
     private enum Key {
         static let refreshInterval = "refreshInterval"
+        static let checksForUpdates = "checksForUpdates"
         static let menuBarStyle = "menuBarStyle"
         static let menuBarLimit = "menuBarLimit"
         static let menuBarValue = "menuBarValue"
@@ -157,6 +166,7 @@ final class AppSettings {
         static let criticalThreshold = "criticalThreshold"
         static let notifiesForWeekly = "notifiesForWeekly"
         static let notifiesOnSessionReset = "notifiesOnSessionReset"
+        static let notifiesAboutUpdates = "notifiesAboutUpdates"
     }
 }
 

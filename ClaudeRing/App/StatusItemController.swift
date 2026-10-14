@@ -11,6 +11,7 @@ final class StatusItemController: NSObject, NSPopoverDelegate {
     private let settings: AppSettings
     private let sessions: ClaudeSessionStore
     private let openSettings: () -> Void
+    private let checkForUpdates: () -> Void
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     private let popover = NSPopover()
     private var displayTask: Task<Void, Never>?
@@ -30,12 +31,15 @@ final class StatusItemController: NSObject, NSPopoverDelegate {
         monitor: UsageMonitor,
         settings: AppSettings,
         sessions: ClaudeSessionStore,
-        openSettings: @escaping () -> Void
+        updater: AppUpdater,
+        openSettings: @escaping () -> Void,
+        checkForUpdates: @escaping () -> Void
     ) {
         self.monitor = monitor
         self.settings = settings
         self.sessions = sessions
         self.openSettings = openSettings
+        self.checkForUpdates = checkForUpdates
         super.init()
 
         statusItem.autosaveName = "ClaudeRing"
@@ -71,6 +75,7 @@ final class StatusItemController: NSObject, NSPopoverDelegate {
             monitor: monitor,
             settings: settings,
             sessions: sessions,
+            updater: updater,
             openSettings: { [weak self] in self?.openSettingsFromPopover() }
         ))
         hostingController.sizingOptions = .preferredContentSize
@@ -240,6 +245,9 @@ final class StatusItemController: NSObject, NSPopoverDelegate {
         let refresh = NSMenuItem(title: String(localized: "Jetzt aktualisieren"), action: #selector(refreshNow), keyEquivalent: "r")
         refresh.target = self
         menu.addItem(refresh)
+        let updates = NSMenuItem(title: String(localized: "Nach Updates suchen …"), action: #selector(showUpdates), keyEquivalent: "")
+        updates.target = self
+        menu.addItem(updates)
         menu.addItem(.separator())
         menu.addItem(NSMenuItem(title: String(localized: "Claude Ring beenden"), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
 
@@ -254,6 +262,10 @@ final class StatusItemController: NSObject, NSPopoverDelegate {
 
     @objc private func showSettings() {
         openSettings()
+    }
+
+    @objc private func showUpdates() {
+        checkForUpdates()
     }
 
     private func openSettingsFromPopover() {

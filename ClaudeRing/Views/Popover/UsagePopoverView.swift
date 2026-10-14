@@ -8,6 +8,7 @@ struct UsagePopoverView: View {
     let monitor: UsageMonitor
     let settings: AppSettings
     let sessions: ClaudeSessionStore
+    let updater: AppUpdater
     let openSettings: () -> Void
 
     /// Cards inside derive their corner radius from this shape, so they stay
@@ -44,6 +45,10 @@ struct UsagePopoverView: View {
 
             if let error = monitor.errorMessage {
                 ErrorBanner(message: error, nextAttempt: monitor.nextAttempt)
+            }
+
+            if let release = updater.availableRelease, updater.showsBanner {
+                UpdateBanner(release: release, updater: updater)
             }
 
             PopoverFooter(
@@ -349,6 +354,52 @@ private struct ErrorBanner: View {
                 .foregroundStyle(.orange)
         }
         .card(tint: .orange)
+    }
+}
+
+/// A newer version: install it right here, put it off or read what changed.
+private struct UpdateBanner: View {
+    let release: AppRelease
+    let updater: AppUpdater
+
+    var body: some View {
+        Label {
+            VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Claude Ring \(release.version.description) ist verfügbar")
+                        .fontWeight(.semibold)
+                    if let error = updater.lastError {
+                        Text(error)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .font(.caption)
+                .fixedSize(horizontal: false, vertical: true)
+
+                HStack(spacing: 8) {
+                    if updater.isInstalling {
+                        ProgressView()
+                            .controlSize(.mini)
+                        Text("Wird installiert, die App startet gleich neu …")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    } else {
+                        Button(updater.canInstall ? "Installieren" : "Herunterladen …") { updater.install() }
+                            .buttonStyle(.borderedProminent)
+                            .help(updater.canInstall ? "Neue Version installieren und Claude Ring neu starten" : "Seite der neuen Version öffnen")
+                        Button("Später") { updater.dismiss() }
+                        Spacer(minLength: 0)
+                        Link("Was ist neu?", destination: release.pageURL)
+                            .font(.caption)
+                    }
+                }
+                .controlSize(.small)
+            }
+        } icon: {
+            Image(systemName: "arrow.down.circle.fill")
+                .foregroundStyle(.tint)
+        }
+        .card(tint: .accentColor)
     }
 }
 

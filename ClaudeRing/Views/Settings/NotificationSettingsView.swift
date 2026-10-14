@@ -43,6 +43,16 @@ struct NotificationSettingsView: View {
             .disabled(!settings.notificationsEnabled)
 
             Section {
+                Toggle("Melden, wenn eine neue Version verfügbar ist", isOn: $settings.notifiesAboutUpdates)
+            } header: {
+                Text("Updates")
+            } footer: {
+                Text("Einmal pro Version. Ein Klick auf die Mitteilung öffnet die Einstellungen mit dem Update.")
+                    .foregroundStyle(.secondary)
+            }
+            .disabled(!settings.notificationsEnabled)
+
+            Section {
                 Button("Test-Mitteilung senden") { notifier.sendTest() }
                     .disabled(!settings.notificationsEnabled || notifier.authorization != .authorized)
             }

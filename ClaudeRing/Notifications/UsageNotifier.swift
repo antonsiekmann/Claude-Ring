@@ -3,16 +3,21 @@ import Observation
 @preconcurrency import UserNotifications
 
 /// Sends a notification when a usage window crosses the warning or critical
-/// threshold, and optionally when a nearly used up session has been reset.
+/// threshold, optionally when a nearly used up session has been reset, and
+/// once per new version of the app.
 @MainActor
 @Observable
 final class UsageNotifier: NSObject, UNUserNotificationCenterDelegate {
     private(set) var authorization: UNAuthorizationStatus = .notDetermined
+    /// Called when the user clicks the update notification.
+    @ObservationIgnored var openUpdate: () -> Void = {}
 
     @ObservationIgnored private let settings: AppSettings
     @ObservationIgnored private let defaults: UserDefaults
     @ObservationIgnored private var center: UNUserNotificationCenter { .current() }
     private static let stateKey = "thresholdStates"
+    private static let announcedVersionKey = "announcedUpdateVersion"
+    nonisolated private static let updateNotificationID = "update"
 
     init(settings: AppSettings, defaults: UserDefaults = .standard) {
         self.settings = settings
@@ -80,6 +85,21 @@ final class UsageNotifier: NSObject, UNUserNotificationCenterDelegate {
         saveStates(states)
     }
 
+    /// Announces a new version once. A version that arrives while
+    /// notifications are off is announced when they get switched on.
+    func announceUpdate(_ version: AppVersion) {
+        guard settings.notificationsEnabled, settings.notifiesAboutUpdates,
+              authorization == .authorized || authorization == .provisional
+        else { return }
+        if let announced = defaults.string(forKey: Self.announcedVersionKey).flatMap(AppVersion.init), announced >= version {
+            return
+        }
+        defaults.set(version.description, forKey: Self.announcedVersionKey)
+        post(id: Self.updateNotificationID,
+             title: String(localized: "Claude Ring \(version.description) ist verfügbar"),
+             body: String(localized: "Klicke hier, um das Update anzusehen und zu installieren."))
+    }
+
     private func send(_ event: ThresholdEvaluator.Event, for window: UsageWindowInfo, isSession: Bool) {
         let remaining = Int(window.remainingPercent.rounded())
         let resetText = window.resetsAt.map {
@@ -129,5 +149,17 @@ final class UsageNotifier: NSObject, UNUserNotificationCenterDelegate {
         willPresent notification: UNNotification
     ) async -> UNNotificationPresentationOptions {
         [.banner, .sound]
+    }
+
+    nonisolated func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse
+    ) async {
+        guard response.notification.request.identifier == Self.updateNotificationID else { return }
+        await showUpdate()
+    }
+
+    private func showUpdate() {
+        openUpdate()
     }
 }

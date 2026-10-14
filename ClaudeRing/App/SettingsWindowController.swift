@@ -19,7 +19,8 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
         notifier: UsageNotifier,
         sessions: ClaudeSessionStore,
         hookInstaller: HookInstaller,
-        uninstaller: AppUninstaller
+        uninstaller: AppUninstaller,
+        updater: AppUpdater
     ) {
         tabController.tabStyle = .toolbar
         tabController.transitionOptions = [.crossfade, .allowUserInteraction]
@@ -33,7 +34,7 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
         super.init(window: window)
         window.delegate = self
 
-        addTab(GeneralSettingsView(settings: settings, launchAtLogin: launchAtLogin, uninstaller: uninstaller),
+        addTab(GeneralSettingsView(settings: settings, launchAtLogin: launchAtLogin, uninstaller: uninstaller, updater: updater),
                title: String(localized: "Allgemein"), symbol: "gearshape")
         addTab(MenuBarSettingsView(settings: settings, monitor: monitor, sessions: sessions),
                title: String(localized: "Menüleiste"), symbol: "menubar.rectangle")

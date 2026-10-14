@@ -9,6 +9,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private lazy var notifier = UsageNotifier(settings: settings)
     private lazy var launchAtLogin = LaunchAtLogin()
     private lazy var hookInstaller = HookInstaller()
+    private lazy var updater = AppUpdater(settings: settings)
     private lazy var uninstaller = AppUninstaller(
         footprint: .current, hookInstaller: hookInstaller, launchAtLogin: launchAtLogin, notifier: notifier
     )
@@ -16,6 +17,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var settingsWindowController: SettingsWindowController?
     private var notificationTask: Task<Void, Never>?
     private var hookStatusTask: Task<Void, Never>?
+    private var updateNotificationTask: Task<Void, Never>?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         guard !AppEnvironment.isRunningTests else { return }
@@ -27,10 +29,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             monitor: monitor,
             settings: settings,
             sessions: sessions,
-            openSettings: { [weak self] in self?.showSettings() }
+            updater: updater,
+            openSettings: { [weak self] in self?.showSettings() },
+            checkForUpdates: { [weak self] in self?.checkForUpdates() }
         )
         monitor.start()
+        updater.start()
         observeSnapshotsForNotifications()
+        observeUpdatesForNotifications()
+        notifier.openUpdate = { [weak self] in self?.openSettings(tab: .general) }
 
         let monitor = monitor
         sessions.onRateLimited = { monitor.refreshUnlessBackingOff() }
@@ -46,13 +53,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func stopEverything() {
         notificationTask?.cancel()
         hookStatusTask?.cancel()
+        updateNotificationTask?.cancel()
         monitor.stop()
+        updater.stop()
         sessions.stop()
         statusItemController?.remove()
         statusItemController = nil
     }
 
     @objc func showSettings() {
+        openSettings(tab: nil)
+    }
+
+    private func openSettings(tab: SettingsWindowController.Tab?) {
         if settingsWindowController == nil {
             settingsWindowController = SettingsWindowController(
                 settings: settings,
@@ -61,10 +74,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 notifier: notifier,
                 sessions: sessions,
                 hookInstaller: hookInstaller,
-                uninstaller: uninstaller
+                uninstaller: uninstaller,
+                updater: updater
             )
         }
-        settingsWindowController?.show()
+        settingsWindowController?.show(tab: tab)
+    }
+
+    /// The result shows in the general settings, next to the install button.
+    private func checkForUpdates() {
+        if updater.availableRelease == nil {
+            updater.checkNow()
+        }
+        openSettings(tab: .general)
     }
 
     /// The sessions folder only exists while the hooks are set up, so watch it
@@ -78,6 +100,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     sessions.stop()
                 } else {
                     sessions.start()
+                }
+            }
+        }
+    }
+
+    private func observeUpdatesForNotifications() {
+        let updater = updater
+        let notifier = notifier
+        updateNotificationTask = Task {
+            for await version in Observations({ updater.availableRelease?.version }) {
+                if let version {
+                    notifier.announceUpdate(version)
                 }
             }
         }

@@ -37,16 +37,16 @@ Sicherheit ▸ Dennoch öffnen** oder im Terminal mit
   Wochenlimits (alle Modelle und modellspezifisch), Wochennutzung nach Bereich und die laufenden
   Claude-Code-Sitzungen mit Projektordner und Zustand. Sitzungen, die Claude Code im Hintergrund
   ausführt (Agentenübersicht, `claude --bg`), tragen den Hinweis „Hintergrund“.
-- **Menü (Rechtsklick):** Einstellungen …, Jetzt aktualisieren, Beenden.
+- **Menü (Rechtsklick):** Einstellungen …, Jetzt aktualisieren, Nach Updates suchen …, Beenden.
 
 ## Einstellungen
 
 | Tab | Inhalt |
 |---|---|
-| Allgemein | Bei der Anmeldung öffnen, Abrufintervall (1 bis 10 Min., Standard 5 Min.), vollständig entfernen |
+| Allgemein | Bei der Anmeldung öffnen, Abrufintervall (1 bis 10 Min., Standard 5 Min.), Updates, vollständig entfernen |
 | Menüleiste | Stil (Ring und Zahl, zwei Balken, nur Zahlen), Limit, übrig/genutzt, Farben, Statuspunkt, Live-Vorschau |
 | Popover | Abschnitte ein- und ausblenden |
-| Mitteilungen | Warnung und kritische Schwelle, Wochenlimit, Meldung nach Sitzungs-Reset |
+| Mitteilungen | Warnung und kritische Schwelle, Wochenlimit, Meldung nach Sitzungs-Reset, neue Version |
 | Claude Code | Statusanzeige einrichten oder entfernen, Token-Status |
 
 ## Woher kommen die Daten?
@@ -89,6 +89,30 @@ Mit deutlich älteren Versionen, etwa über geteilte Dotfiles, besser nicht einr
 Grenzen: Nach dem Genehmigen einer Berechtigung bleibt der Punkt hellblau, bis das Werkzeug fertig ist.
 Nach einem Abbruch mit Esc wird er erst nach etwa einer Minute wieder grün.
 
+## Updates
+
+Kurz nach dem Start und dann einmal am Tag fragt die App bei GitHub nach dem neuesten Release
+(`GET https://api.github.com/repos/antonsiekmann/Claude-Ring/releases/latest`, ohne Anmeldung und
+ohne Daten über dich oder deine Nutzung). Abschalten lässt sich das unter **Einstellungen ▸
+Allgemein ▸ Automatisch nach Updates suchen**; „Jetzt suchen“ und „Nach Updates suchen …“ im
+Rechtsklick-Menü gehen immer.
+
+Gibt es eine neuere Version, zeigen Popover und Einstellungen sie an. Sind Mitteilungen
+eingeschaltet, kommt außerdem einmal pro Version eine Mitteilung (abschaltbar unter Mitteilungen ▸
+Updates); ein Klick darauf öffnet die Einstellungen. Geladen wird erst nach einem Klick auf
+**Installieren**. Die App
+
+1. lädt `ClaudeRing.dmg` aus dem Release und vergleicht sie mit der SHA-256-Prüfsumme, die GitHub
+   für die Datei angibt,
+2. hängt das Disk-Image unsichtbar ein und prüft die App darin: gleiche Bundle-ID, angekündigte
+   Version, gültige Signatur, läuft mit dieser macOS-Version,
+3. ersetzt sich in einem Schritt durch die neue App, beendet sich und startet die neue Version.
+
+Einstellungen, Hooks und Anmeldeobjekt bleiben dabei unverändert. Schlägt ein Schritt fehl, bleibt
+die alte App, wie sie war. Selbst ersetzen kann sich nur eine App in „Programme“ (`/Applications`
+oder `~/Applications`), in dem du schreiben darfst; sonst öffnet „Herunterladen …“ die Release-Seite.
+„Später“ blendet eine Version im Popover aus, bis eine neuere erscheint.
+
 ## Vollständig entfernen
 
 **Einstellungen ▸ Allgemein ▸ Claude Ring vollständig entfernen** nimmt nach einer Rückfrage alles
@@ -118,6 +142,7 @@ und Einträge im System-Log (die verfallen von selbst).
   wartet die App erst 5 Minuten, bei weiteren 429 bis zu 30 Minuten, und zeigt so lange den zuletzt
   abgerufenen Stand. Der wird gespeichert (nur Prozente und Zeiten) und gleich nach dem Start angezeigt.
 - Der Claude-Code-Status kommt über Dateisystem-Ereignisse, ohne Abfrageschleife.
+- Die Suche nach Updates ist eine kleine Anfrage an GitHub pro Tag (und eine nach dem Start).
 - Die Menüleiste wird nur neu gezeichnet, wenn sich etwas Sichtbares ändert.
 
 ## Entwickeln
@@ -132,7 +157,9 @@ xcodebuild -project ClaudeRing.xcodeproj -scheme ClaudeRing -destination 'platfo
 ```
 
 Mit `TEST_RUNNER_SNAPSHOT_DIR=<ordner>` vor dem Befehl rendern die Snapshot-Tests Menüleiste,
-Popover und Einstellungen als PNG, jeweils hell und dunkel.
+Popover und Einstellungen als PNG, jeweils hell und dunkel. `TEST_RUNNER_UPDATE_E2E=1` lädt
+zusätzlich das neueste Release von GitHub und installiert es testweise über eine Platzhalter-App in
+einem temporären Ordner.
 
 | Skript | Zweck |
 |---|---|
@@ -150,7 +177,9 @@ git push origin v1.1.0
 
 Den Rest erledigt GitHub Actions (`.github/workflows/build.yml`): Tests, Universal-Build, DMG und
 die Release-Seite mit automatisch erzeugten Änderungsnotizen. Die Version kommt aus dem Tag, die
-Build-Nummer aus der Laufnummer, im Projekt muss sich dafür nichts ändern. Jeder Push auf `main` und
+Build-Nummer aus der Laufnummer, im Projekt muss sich dafür nichts ändern. Installierte Apps finden
+das neue Release spätestens nach einem Tag; die Updatefunktion braucht dafür die Datei
+`ClaudeRing.dmg` im Release, das Tag-Format `vMAJOR.MINOR.PATCH` und eine höhere Versionsnummer. Jeder Push auf `main` und
 jeder Pull Request lässt die Tests laufen.
 
 ## Lizenz
@@ -170,6 +199,7 @@ ClaudeRing/
 ├── Usage/          Token (CredentialProvider), API-Client, Abrufplanung, Ruhezustand/Sperre
 ├── ClaudeCode/     Hook-Skript, settings.json-Editor, Installer, Sitzungen und ihre Zustände
 ├── Notifications/  Schwellen-Logik und Mitteilungen
+├── Update/         Release-Abfrage bei GitHub, Download, Prüfung und Austausch der App
 ├── Views/          Menüleisten-Renderer, Popover, Einstellungs-Tabs
 └── AppIcon.icon    App-Icon im Icon-Composer-Format (Liquid Glass)
 ClaudeRingTests/            Swift-Testing-Tests und Snapshot-Tests

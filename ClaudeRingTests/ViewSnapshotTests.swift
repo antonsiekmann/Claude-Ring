@@ -25,7 +25,8 @@ struct ViewSnapshotTests {
                     hookInstaller: HookInstaller(paths: .init(home: FileManager.default.temporaryDirectory.appending(path: "home-\(UUID())"))),
                     launchAtLogin: LaunchAtLogin(),
                     notifier: notifier
-                )
+                ),
+                updater: AppUpdater(settings: settings, defaults: defaults)
             ))),
             ("settings-menubar", AnyView(MenuBarSettingsView(settings: settings, monitor: monitor, sessions: sessions))),
             ("settings-popover", AnyView(PopoverSettingsView(settings: settings))),
@@ -73,19 +74,54 @@ struct ViewSnapshotTests {
         let sessions = ClaudeSessionStore(directory: sessionsDirectory, processProbe: AlwaysAlive())
         sessions.reloadNow()
 
+        let updater = AppUpdater(settings: settings, defaults: defaults)
         let monitor = UsageMonitor(settings: settings)
         monitor.showPreview(snapshot: snapshot)
-        try Self.write(UsagePopoverView(monitor: monitor, settings: settings, sessions: sessions, openSettings: {}), name: "popover-full")
+        try Self.write(UsagePopoverView(monitor: monitor, settings: settings, sessions: sessions, updater: updater, openSettings: {}), name: "popover-full")
 
         let loading = UsageMonitor(settings: settings)
-        try Self.write(UsagePopoverView(monitor: loading, settings: settings, sessions: ClaudeSessionStore(directory: sessionsDirectory.appending(path: "none")), openSettings: {}), name: "popover-loading")
+        try Self.write(UsagePopoverView(monitor: loading, settings: settings, sessions: ClaudeSessionStore(directory: sessionsDirectory.appending(path: "none")), updater: updater, openSettings: {}), name: "popover-loading")
 
         let failing = UsageMonitor(settings: settings)
         failing.showPreview(snapshot: snapshot, errorMessage: UsageAPIError.unauthorized.localizedDescription)
         settings.showsBreakdown = false
         settings.showsModelLimits = false
-        try Self.write(UsagePopoverView(monitor: failing, settings: settings, sessions: sessions, openSettings: {}), name: "popover-error")
+        try Self.write(UsagePopoverView(monitor: failing, settings: settings, sessions: sessions, updater: updater, openSettings: {}), name: "popover-error")
+
+        let updating = AppUpdater(settings: settings, defaults: defaults, currentVersion: AppVersion("1.0.0"))
+        updating.showPreview(release: Self.previewRelease)
+        try Self.write(UsagePopoverView(monitor: monitor, settings: settings, sessions: sessions, updater: updating, openSettings: {}), name: "popover-update")
     }
+
+    @Test(.enabled(if: directory != nil))
+    func `Render update states in the general settings`() throws {
+        let defaults = UserDefaults(suiteName: "snapshots-\(UUID())")!
+        let settings = AppSettings(defaults: defaults)
+        let notifier = UsageNotifier(settings: settings, defaults: defaults)
+        let uninstaller = AppUninstaller(
+            footprint: AppFootprint(home: FileManager.default.temporaryDirectory, bundleIdentifier: "test", executableName: "test"),
+            hookInstaller: HookInstaller(paths: .init(home: FileManager.default.temporaryDirectory.appending(path: "home-\(UUID())"))),
+            launchAtLogin: LaunchAtLogin(),
+            notifier: notifier
+        )
+
+        let current = AppUpdater(settings: settings, defaults: defaults, currentVersion: AppVersion("1.0.0"))
+        current.showPreview(release: nil, lastChecked: .now.addingTimeInterval(-7200))
+        try Self.write(GeneralSettingsView(settings: settings, launchAtLogin: LaunchAtLogin(), uninstaller: uninstaller, updater: current)
+            .frame(width: 520), name: "settings-general-current")
+
+        let available = AppUpdater(settings: settings, defaults: defaults, currentVersion: AppVersion("1.0.0"))
+        available.showPreview(release: Self.previewRelease)
+        try Self.write(GeneralSettingsView(settings: settings, launchAtLogin: LaunchAtLogin(), uninstaller: uninstaller, updater: available)
+            .frame(width: 520), name: "settings-general-update")
+    }
+
+    private static let previewRelease = AppRelease(
+        version: AppVersion("1.1.0")!,
+        pageURL: URL(string: "https://github.com/antonsiekmann/Claude-Ring/releases/tag/v1.1.0")!,
+        download: .init(url: URL(string: "https://github.com/antonsiekmann/Claude-Ring/releases/download/v1.1.0/ClaudeRing.dmg")!,
+                        sha256: String(repeating: "0", count: 64), size: 3_000_000)
+    )
 
     private struct AlwaysAlive: ProcessProbing {
         func isAlive(pid: Int32, recordedAt date: Date) -> Bool { true }
