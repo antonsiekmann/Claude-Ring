@@ -25,6 +25,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.mainMenu = MainMenu.make(settingsAction: #selector(showSettings), target: self)
         hookInstaller.repairScriptIfNeeded()
         notifier.activate()
+        notifier.removeAnnouncement(ifInstalled: updater.currentVersion)
+        // Leftovers of an update that a crash or power loss cut short.
+        Task.detached(priority: .utility) { AppFootprint.current.removeUpdateWorkspaces() }
         statusItemController = StatusItemController(
             monitor: monitor,
             settings: settings,

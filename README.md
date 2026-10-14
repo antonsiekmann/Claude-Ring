@@ -109,7 +109,11 @@ Updates); ein Klick darauf öffnet die Einstellungen. Geladen wird erst nach ein
 3. ersetzt sich in einem Schritt durch die neue App, beendet sich und startet die neue Version.
 
 Einstellungen, Hooks und Anmeldeobjekt bleiben dabei unverändert. Schlägt ein Schritt fehl, bleibt
-die alte App, wie sie war. Selbst ersetzen kann sich nur eine App in „Programme“ (`/Applications`
+die alte App, wie sie war. Zurück bleibt nichts: Die alte App wird gelöscht (nicht in den
+Papierkorb gelegt), das Disk-Image ausgeworfen, Download und Arbeitsordner
+(`~/Library/Caches/eu.siekmann.ClaudeRing/Updates`) gelöscht, die Mitteilung zur neuen Version nach
+dem Neustart entfernt. Bricht ein Update durch
+Absturz oder Stromausfall ab, räumt die App die Reste beim nächsten Start weg. Selbst ersetzen kann sich nur eine App in „Programme“ (`/Applications`
 oder `~/Applications`), in dem du schreiben darfst; sonst öffnet „Herunterladen …“ die Release-Seite.
 „Später“ blendet eine Version im Popover aus, bis eine neuere erscheint.
 
@@ -128,6 +132,7 @@ wieder heraus, was die App angelegt hat, und beendet sie:
 - die Einstellungen (`~/Library/Preferences/eu.siekmann.ClaudeRing.plist`)
 - das Anmeldeobjekt, zugestellte Mitteilungen
 - Caches, HTTP-Speicher und gespeicherte Fensterzustände
+- Reste eines abgebrochenen Updates (ein noch eingehängtes Disk-Image wird vorher ausgeworfen)
 - die App selbst, wenn sie in „Programme“ liegt (in den Papierkorb)
 
 Lassen sich die Hooks nicht entfernen, etwa weil `settings.json` gerade kein gültiges JSON ist, löscht

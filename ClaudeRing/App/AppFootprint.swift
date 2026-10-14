@@ -23,6 +23,13 @@ struct AppFootprint: Sendable {
         library.appending(path: "Preferences/\(bundleIdentifier).plist")
     }
 
+    /// Work folders of running updates: download, mounted image, new app.
+    /// An update removes its folder when it ends; after a crash or power loss
+    /// the next launch does.
+    var updatesDirectory: URL {
+        library.appending(path: "Caches/\(bundleIdentifier)/Updates", directoryHint: .isDirectory)
+    }
+
     /// Folders and files to delete: hook script, sessions and backups, caches,
     /// HTTP storage and saved window state.
     var items: [URL] {
@@ -45,6 +52,14 @@ struct AppFootprint: Sendable {
         }
     }
 
+    /// Ejects a disk image still attached in a work folder of an update and
+    /// deletes the folders. Runs at launch and when the app is removed.
+    /// - Returns: The folders that could not be deleted.
+    @discardableResult
+    func removeUpdateWorkspaces(fileManager: FileManager = .default) -> [URL] {
+        UpdateInstaller.removeWorkspaces(in: updatesDirectory, fileManager: fileManager)
+    }
+
     /// Deletes everything that exists.
     /// - Returns: The items that exist but could not be deleted.
     @discardableResult
@@ -53,11 +68,13 @@ struct AppFootprint: Sendable {
         settingsDirectories: [URL],
         fileManager: FileManager = .default
     ) -> [URL] {
+        // First, so no disk image is attached inside the caches deleted below.
+        let updateFailures = removeUpdateWorkspaces(fileManager: fileManager)
         var targets = items + settingsTemporaries(in: settingsDirectories, fileManager: fileManager)
         if includingPreferencesFile {
             targets.append(preferencesFile)
         }
-        return targets.filter { url in
+        let failures = targets.filter { url in
             guard fileManager.fileExists(atPath: url.path) else { return false }
             do {
                 try fileManager.removeItem(at: url)
@@ -66,5 +83,6 @@ struct AppFootprint: Sendable {
                 return true
             }
         }
+        return updateFailures + failures
     }
 }

@@ -85,6 +85,16 @@ final class UsageNotifier: NSObject, UNUserNotificationCenterDelegate {
         saveStates(states)
     }
 
+    /// Once that version or a newer one runs, its announcement goes from the
+    /// Notification Center.
+    func removeAnnouncement(ifInstalled currentVersion: AppVersion?) {
+        guard let currentVersion,
+              let announced = defaults.string(forKey: Self.announcedVersionKey).flatMap(AppVersion.init),
+              announced <= currentVersion
+        else { return }
+        center.removeDeliveredNotifications(withIdentifiers: [Self.updateNotificationID])
+    }
+
     /// Announces a new version once. A version that arrives while
     /// notifications are off is announced when they get switched on.
     func announceUpdate(_ version: AppVersion) {

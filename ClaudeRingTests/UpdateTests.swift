@@ -200,7 +200,8 @@ struct UpdateInstallerTests {
         let download = try #require(release.download)
         let target = try makeApp(named: "Claude Ring.app", version: "0.0.1")
 
-        try await UpdateInstaller(appURL: target, bundleIdentifier: "eu.siekmann.ClaudeRing")
+        try await UpdateInstaller(appURL: target, bundleIdentifier: "eu.siekmann.ClaudeRing",
+                                  updatesDirectory: root.appending(path: "Caches/Updates", directoryHint: .isDirectory))
             .install(download, version: release.version)
 
         let info = try #require(NSDictionary(contentsOf: target.appending(path: "Contents/Info.plist")))

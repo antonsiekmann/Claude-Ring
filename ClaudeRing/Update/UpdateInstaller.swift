@@ -50,20 +50,26 @@ enum UpdateInstallError: LocalizedError {
 struct UpdateInstaller: Sendable {
     /// The app's name in the DMG; the installed copy may be named differently.
     static let appNameInImage = "Claude Ring.app"
+    /// The DMG is attached at this folder inside the workspace.
+    static let mountFolderName = "mount"
 
     /// The bundle to replace, normally the running app.
     let appURL: URL
     let bundleIdentifier: String
+    /// Holds one work folder per running update; see `AppFootprint.updatesDirectory`.
+    let updatesDirectory: URL
     private let session: URLSession
     private static let logger = Logger(subsystem: "eu.siekmann.ClaudeRing", category: "update")
 
     init(
         appURL: URL = Bundle.main.bundleURL,
         bundleIdentifier: String = Bundle.main.bundleIdentifier ?? "eu.siekmann.ClaudeRing",
+        updatesDirectory: URL = AppFootprint.current.updatesDirectory,
         session: URLSession = URLSession(configuration: .ephemeral)
     ) {
         self.appURL = appURL
         self.bundleIdentifier = bundleIdentifier
+        self.updatesDirectory = updatesDirectory
         self.session = session
     }
 
@@ -85,11 +91,13 @@ struct UpdateInstaller: Sendable {
 
     func install(_ download: AppRelease.Download, version: AppVersion) async throws {
         let fileManager = FileManager.default
-        // A temporary folder on the app's volume, so the final swap is a rename.
-        let workspace = try fileManager.url(
-            for: .itemReplacementDirectory, in: .userDomainMask, appropriateFor: appURL, create: true
-        )
-        defer { try? fileManager.removeItem(at: workspace) }
+        // Holds the download, the mounted image and the copy, and receives the
+        // old app during the swap; all of it goes away with the folder.
+        let workspace = try makeWorkspace(fileManager: fileManager)
+        defer {
+            Self.removeWorkspace(workspace, fileManager: fileManager)
+            Self.removeWorkspaces(in: updatesDirectory, fileManager: fileManager)
+        }
 
         let (file, response) = try await session.download(from: download.url)
         guard (response as? HTTPURLResponse)?.statusCode == 200 else {
@@ -107,7 +115,7 @@ struct UpdateInstaller: Sendable {
     private func replaceApp(withAppIn image: URL, sha256: String, version: AppVersion, workspace: URL) throws {
         guard try Self.sha256Hex(of: image) == sha256 else { throw UpdateInstallError.checksumMismatch }
 
-        let mountPoint = workspace.appending(path: "mount", directoryHint: .isDirectory)
+        let mountPoint = workspace.appending(path: Self.mountFolderName, directoryHint: .isDirectory)
         try FileManager.default.createDirectory(at: mountPoint, withIntermediateDirectories: false)
         try Self.run("/usr/bin/hdiutil", ["attach", image.path, "-readonly", "-nobrowse", "-noautoopen",
                                           "-mountpoint", mountPoint.path], else: .mountFailed)
@@ -145,6 +153,61 @@ struct UpdateInstaller: Sendable {
     static func sha256Hex(of file: URL) throws -> String {
         let data = try Data(contentsOf: file, options: .mappedIfSafe)
         return SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+    }
+
+    /// A new folder in `updatesDirectory`, where a crash cannot hide it: the
+    /// next launch finds and removes it. The swap at the end must be a rename,
+    /// so if the caches sit on another volume than the app, FileManager
+    /// provides a temporary folder on the app's volume instead.
+    private func makeWorkspace(fileManager: FileManager) throws -> URL {
+        if (try? fileManager.createDirectory(at: updatesDirectory, withIntermediateDirectories: true)) != nil,
+           let volume = Self.volume(of: updatesDirectory), volume == Self.volume(of: appURL.deletingLastPathComponent()) {
+            let workspace = updatesDirectory.appending(path: UUID().uuidString, directoryHint: .isDirectory)
+            try fileManager.createDirectory(at: workspace, withIntermediateDirectories: false)
+            return workspace
+        }
+        Self.removeWorkspaces(in: updatesDirectory, fileManager: fileManager)
+        return try fileManager.url(for: .itemReplacementDirectory, in: .userDomainMask, appropriateFor: appURL, create: true)
+    }
+
+    private static func volume(of url: URL) -> NSObject? {
+        (try? url.resourceValues(forKeys: [.volumeIdentifierKey]))?.volumeIdentifier as? NSObject
+    }
+
+    /// Removes every work folder in `updatesDirectory`, then the folder itself
+    /// and the caches folder above it, if nothing else is left there.
+    /// - Returns: The work folders that could not be deleted.
+    @discardableResult
+    static func removeWorkspaces(in updatesDirectory: URL, fileManager: FileManager = .default) -> [URL] {
+        let workspaces = ((try? fileManager.contentsOfDirectory(atPath: updatesDirectory.path)) ?? [])
+            .map { updatesDirectory.appending(path: $0, directoryHint: .isDirectory) }
+        let failures = workspaces.filter { !removeWorkspace($0, fileManager: fileManager) }
+        for folder in [updatesDirectory, updatesDirectory.deletingLastPathComponent()] {
+            if (try? fileManager.contentsOfDirectory(atPath: folder.path))?.isEmpty == true {
+                try? fileManager.removeItem(at: folder)
+            }
+        }
+        return failures
+    }
+
+    /// Ejects the disk image if it is still attached, then deletes the work
+    /// folder. If the image will not eject, the folder stays, so nothing on
+    /// the mounted volume is touched.
+    /// - Returns: Whether the folder is gone.
+    @discardableResult
+    static func removeWorkspace(_ workspace: URL, fileManager: FileManager = .default) -> Bool {
+        let mountPoint = workspace.appending(path: mountFolderName, directoryHint: .isDirectory)
+        if isMounted(mountPoint) {
+            detach(mountPoint)
+            guard !isMounted(mountPoint) else { return false }
+        }
+        try? fileManager.removeItem(at: workspace)
+        return !fileManager.fileExists(atPath: workspace.path)
+    }
+
+    /// A fresh URL each time, so no cached value hides an eject.
+    private static func isMounted(_ folder: URL) -> Bool {
+        (try? URL(filePath: folder.path).resourceValues(forKeys: [.isVolumeKey]))?.isVolume == true
     }
 
     // MARK: - Relaunch

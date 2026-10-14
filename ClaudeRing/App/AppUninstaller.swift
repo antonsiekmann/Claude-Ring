@@ -45,7 +45,7 @@ final class AppUninstaller {
             String(localized: "Hook-Skript, Sitzungsdaten und Sicherungen"),
             String(localized: "alle Einstellungen der App"),
             String(localized: "das Anmeldeobjekt und die Mitteilungen der App"),
-            String(localized: "Caches und gespeicherte Fensterzustände"),
+            String(localized: "Caches, gespeicherte Fensterzustände und Reste abgebrochener Updates"),
         ]
         if trashesApp {
             items.append(String(localized: "die App selbst (in den Papierkorb)"))
