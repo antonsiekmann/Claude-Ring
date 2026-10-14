@@ -20,7 +20,7 @@ extension ClaudeActivity {
     var nsColor: NSColor {
         switch self {
         case .working: .systemRed
-        case .waiting: .systemOrange
+        case .waiting: .systemCyan
         case .idle: .systemGreen
         }
     }

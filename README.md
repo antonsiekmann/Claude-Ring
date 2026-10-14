@@ -28,11 +28,11 @@ Sicherheit ▸ Dennoch öffnen** oder im Terminal mit
   Claude Code (bei den Stilen „Zwei Balken“ und „Nur Zahlen“ rechts daneben):
   - rot, pulsierend: Claude Code arbeitet (ruhig bei „Bewegung reduzieren“ und im Stromsparmodus; die
     Animation läuft im WindowServer und kostet die App keine Rechenzeit)
-  - orange: Claude Code wartet auf eine Antwort (Rückfrage oder Berechtigung)
+  - hellblau: Claude Code wartet auf eine Antwort (Rückfrage oder Berechtigung)
   - grün: frei
   - kein Punkt: gerade läuft keine Claude-Code-Sitzung
 
-  Bei mehreren Sitzungen gilt Orange vor Rot vor Grün.
+  Bei mehreren Sitzungen gilt Hellblau vor Rot vor Grün.
 - **Popover (Linksklick):** großer Ring für die Sitzung mit Reset-Countdown, Karten für die
   Wochenlimits (alle Modelle und modellspezifisch), Wochennutzung nach Bereich und die laufenden
   Claude-Code-Sitzungen mit Projektordner und Zustand. Sitzungen, die Claude Code im Hintergrund
@@ -86,7 +86,7 @@ heraus.
 Die Hooks nutzen Ereignisse, die es in aktuellen Claude-Code-Versionen gibt (getestet mit 2.1.294).
 Mit deutlich älteren Versionen, etwa über geteilte Dotfiles, besser nicht einrichten.
 
-Grenzen: Nach dem Genehmigen einer Berechtigung bleibt der Punkt orange, bis das Werkzeug fertig ist.
+Grenzen: Nach dem Genehmigen einer Berechtigung bleibt der Punkt hellblau, bis das Werkzeug fertig ist.
 Nach einem Abbruch mit Esc wird er erst nach etwa einer Minute wieder grün.
 
 ## Vollständig entfernen
