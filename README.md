@@ -1,3 +1,20 @@
+<p align="center">
+  <img src="docs/icon.png" width="128" alt="Claude Ring Icon">
+</p>
+
+<h1 align="center">Claude Ring</h1>
+
+<p align="center">
+  <samp>Claude usage limits and Claude Code status in your macOS menu bar</samp>
+</p>
+
+<p align="center">
+  <a href="https://github.com/antonsiekmann/Claude-Ring/releases/latest"><img src="https://img.shields.io/github/v/release/antonsiekmann/Claude-Ring?style=for-the-badge&label=version" alt="Version"></a>
+  <img src="https://img.shields.io/badge/macOS-26%2B-000000?style=for-the-badge&logo=apple&logoColor=white" alt="macOS 26+">
+  <img src="https://img.shields.io/github/last-commit/antonsiekmann/Claude-Ring?style=for-the-badge&label=last%20update" alt="Last update">
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/antonsiekmann/Claude-Ring?style=for-the-badge" alt="License"></a>
+</p>
+
 # Claude Ring
 
 Eine macOS-Menüleisten-App (macOS 26 oder neuer), die zeigt, wie viel vom Claude-Nutzungslimit
