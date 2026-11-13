@@ -96,11 +96,12 @@ struct ReleaseClientTests {
 }
 
 struct UpdateInstallerTests {
+    private let folder = TemporaryFolder("update")
     private let root: URL
     private let fileManager = FileManager.default
 
     init() throws {
-        root = fileManager.temporaryDirectory.appending(path: "update-\(UUID())", directoryHint: .isDirectory)
+        root = folder.url
         try fileManager.createDirectory(at: root, withIntermediateDirectories: true)
     }
 

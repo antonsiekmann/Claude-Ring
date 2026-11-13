@@ -3,12 +3,13 @@ import Testing
 @testable import ClaudeRing
 
 struct AppFootprintTests {
+    private let folder = TemporaryFolder("footprint")
     private let home: URL
     private let footprint: AppFootprint
     private let fileManager = FileManager.default
 
     init() throws {
-        home = fileManager.temporaryDirectory.appending(path: "footprint-\(UUID())", directoryHint: .isDirectory)
+        home = folder.url
         footprint = AppFootprint(home: home, bundleIdentifier: "eu.siekmann.ClaudeRing", executableName: "ClaudeRing")
     }
 
@@ -128,8 +129,10 @@ struct AppFootprintTests {
 
 @MainActor
 struct HookRemovalTests {
+    private let folder = TemporaryFolder("removal")
+
     @Test func `Refuses to touch invalid settings`() throws {
-        let home = FileManager.default.temporaryDirectory.appending(path: "removal-\(UUID())", directoryHint: .isDirectory)
+        let home = folder.url
         let paths = HookInstaller.Paths(home: home)
         try FileManager.default.createDirectory(at: paths.claudeSettings.deletingLastPathComponent(), withIntermediateDirectories: true)
         try Data("{ broken".utf8).write(to: paths.claudeSettings)
@@ -141,7 +144,7 @@ struct HookRemovalTests {
     }
 
     @Test func `Takes only our hooks out`() throws {
-        let home = FileManager.default.temporaryDirectory.appending(path: "removal-\(UUID())", directoryHint: .isDirectory)
+        let home = folder.url
         let paths = HookInstaller.Paths(home: home)
         try FileManager.default.createDirectory(at: paths.claudeSettings.deletingLastPathComponent(), withIntermediateDirectories: true)
         let original = "{\n  \"model\": \"opus\"\n}\n"
@@ -159,9 +162,10 @@ struct HookRemovalTests {
 @MainActor
 struct AppUninstallerTests {
     private let store = TestDefaults()
+    private let folder = TemporaryFolder("uninstall")
 
     @Test func `Removes hooks, files and preferences, then quits`() throws {
-        let home = FileManager.default.temporaryDirectory.appending(path: "uninstall-\(UUID())", directoryHint: .isDirectory)
+        let home = folder.url
         let paths = HookInstaller.Paths(home: home)
         let footprint = AppFootprint(home: home, bundleIdentifier: "test.uninstall.\(UUID())", executableName: "Nothing")
         try FileManager.default.createDirectory(at: paths.claudeSettings.deletingLastPathComponent(), withIntermediateDirectories: true)
@@ -201,7 +205,7 @@ struct AppUninstallerTests {
     }
 
     @Test func `Removes nothing when the hooks cannot be taken out`() throws {
-        let home = FileManager.default.temporaryDirectory.appending(path: "uninstall-\(UUID())", directoryHint: .isDirectory)
+        let home = folder.url
         let paths = HookInstaller.Paths(home: home)
         let footprint = AppFootprint(home: home, bundleIdentifier: "test.uninstall.\(UUID())", executableName: "Nothing")
         try FileManager.default.createDirectory(at: paths.sessions, withIntermediateDirectories: true)
@@ -227,14 +231,16 @@ struct AppUninstallerTests {
 }
 
 struct PreferencesCleanupTests {
+    private let folder = TemporaryFolder("prefs")
+
     private func plist(_ dictionary: [String: Any]) throws -> URL {
-        let url = FileManager.default.temporaryDirectory.appending(path: "prefs-\(UUID()).plist")
+        let url = folder.url.appending(path: "prefs-\(UUID()).plist")
         try PropertyListSerialization.data(fromPropertyList: dictionary, format: .binary, options: 0).write(to: url)
         return url
     }
 
     @Test func `Removes an empty preferences file that appears later`() async throws {
-        let url = FileManager.default.temporaryDirectory.appending(path: "prefs-\(UUID()).plist")
+        let url = folder.url.appending(path: "prefs-\(UUID()).plist")
         AppUninstaller.launchPreferencesCleanup(for: url, seconds: 4)
         try await Task.sleep(for: .milliseconds(500))
         try PropertyListSerialization.data(fromPropertyList: [String: Any](), format: .binary, options: 0).write(to: url)

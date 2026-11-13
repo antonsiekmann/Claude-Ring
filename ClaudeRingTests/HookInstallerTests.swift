@@ -338,6 +338,7 @@ struct HookInstallerTests {
 /// Runs the real hook script the way Claude Code does: through `sh -c` with
 /// the hook payload on stdin.
 struct HookScriptTests {
+    private let folder = TemporaryFolder("hook-script")
     private struct Result {
         var status: Int32
         var output: Data
@@ -345,7 +346,7 @@ struct HookScriptTests {
     }
 
     private func runHook(stdin: String, createSessionsDirectory: Bool = true, environment: [String: String] = [:]) throws -> Result {
-        let home = FileManager.default.temporaryDirectory.appending(path: "hook-script-\(UUID())", directoryHint: .isDirectory)
+        let home = folder.url.appending(path: UUID().uuidString, directoryHint: .isDirectory)
         let paths = HookInstaller.Paths(home: home)
         try FileManager.default.createDirectory(at: paths.appSupport, withIntermediateDirectories: true)
         if createSessionsDirectory {

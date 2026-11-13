@@ -65,12 +65,13 @@ private final class FakeProbe: ProcessProbing {
 
 @MainActor
 struct ClaudeSessionStoreTests {
+    private let folder = TemporaryFolder("sessions")
     private let directory: URL
     private let probe = FakeProbe(alive: [100, 200, 300])
     private let store: ClaudeSessionStore
 
     init() throws {
-        directory = FileManager.default.temporaryDirectory.appending(path: "sessions-\(UUID())", directoryHint: .isDirectory)
+        directory = folder.url
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         store = ClaudeSessionStore(directory: directory, processProbe: probe)
     }

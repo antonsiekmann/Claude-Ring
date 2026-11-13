@@ -66,6 +66,7 @@ struct ViewSnapshotTests {
 
         let sessionsDirectory = FileManager.default.temporaryDirectory.appending(path: "popover-\(UUID())")
         try FileManager.default.createDirectory(at: sessionsDirectory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: sessionsDirectory) }
         for (pid, event, project, kind) in [
             (11, "UserPromptSubmit", "claude-ring", "null"), (12, "PermissionRequest", "Ticketverkauf", "null"),
             (13, "Stop", "claude-ring", #""bg""#),
