@@ -81,7 +81,7 @@ rm -f "$DMG"
 # release fails here instead of in the app.
 echo "Prüfe das DMG …"
 rm -rf "$MOUNT"
-mkdir -p "$MOUNT"
+mkdir -p "$MOUNT"  # diskutil on macOS 26 does not create it
 diskutil image attach --readOnly --mountOptions nobrowse --mountPoint "$MOUNT" "$DMG" </dev/null >/dev/null
 trap 'diskutil eject "$MOUNT" >/dev/null || diskutil eject force "$MOUNT" >/dev/null' EXIT
 fail() {

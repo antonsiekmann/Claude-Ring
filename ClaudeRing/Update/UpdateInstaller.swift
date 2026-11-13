@@ -242,7 +242,8 @@ struct UpdateInstaller: Sendable {
     private static let diskutil = "/usr/sbin/diskutil"
 
     /// Attaches the disk image read-only at `mountPoint`, hidden from the
-    /// Finder. Eject it with `removeWorkspace(_:)`.
+    /// Finder. The folder must exist: macOS 26 does not create it, unlike
+    /// macOS 27. Eject it with `removeWorkspace(_:)`.
     static func attach(_ image: URL, at mountPoint: URL) throws {
         try run(diskutil, ["image", "attach", "--readOnly", "--mountOptions", "nobrowse",
                            "--mountPoint", mountPoint.path, image.path], else: .mountFailed)

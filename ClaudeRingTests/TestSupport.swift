@@ -31,8 +31,10 @@ enum TestDiskImage {
         defer { try? FileManager.default.removeItem(at: blank) }
         try diskutil("image", "create", "blank", "--size", "10m", "--volumeName", "Test", blank.path)
 
-        // Not created beforehand: diskutil makes the folder and removes it again on eject.
+        // On macOS 26 the folder must exist; only macOS 27 creates it itself.
         let mountPoint = image.deletingLastPathComponent().appending(path: "filling-\(UUID())", directoryHint: .isDirectory)
+        try FileManager.default.createDirectory(at: mountPoint, withIntermediateDirectories: false)
+        defer { try? FileManager.default.removeItem(at: mountPoint) }
         try diskutil("image", "attach", "--mountOptions", "nobrowse", "--mountPoint", mountPoint.path, blank.path)
         do {
             for (name, data) in files {
