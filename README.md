@@ -204,7 +204,8 @@ und Einträge im System-Log (die verfallen von selbst).
 
 Texte: Quelle ist Deutsch, die englische Übersetzung steht in `ClaudeRing/Localizable.xcstrings`
 (dazu `ClaudeRing-InfoPlist.xcstrings`). Neue Texte trägt Xcode beim Bauen in den Katalog ein; die
-Übersetzung dort ergänzen. Ein Test schlägt fehl, solange ein Eintrag ohne englischen Text ist.
+Übersetzung dort ergänzen. Ein Test schlägt fehl, solange ein Eintrag ohne englischen Text ist. Die
+Tests laufen immer auf Deutsch (im Schema eingestellt), weil sie deutsche Texte prüfen.
 
 Tests: ⌘U in Xcode oder
 

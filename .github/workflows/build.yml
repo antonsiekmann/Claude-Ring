@@ -28,8 +28,10 @@ jobs:
           sudo xcode-select -s "$xcode"
           xcodebuild -version
 
+      # The tests check German texts, the source language. Runners are English,
+      # and since the app is localized it would follow the runner's language.
       - name: Test
-        run: xcodebuild -project ClaudeRing.xcodeproj -scheme ClaudeRing -destination 'platform=macOS' test
+        run: xcodebuild -project ClaudeRing.xcodeproj -scheme ClaudeRing -destination 'platform=macOS' -testLanguage de -testRegion DE test
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')
