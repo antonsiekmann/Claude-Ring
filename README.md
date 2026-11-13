@@ -53,14 +53,14 @@ Willkommensfenster benutzt hat, bekommt es nach dem Update nicht zu sehen.
   kritischen Schwelle rot (Standard 80 und 95 % genutzt, einstellbar unter Mitteilungen; dieselben
   Schwellen lösen die Mitteilungen aus). Die Zahl bleibt in der normalen Textfarbe. In der Mitte des Rings sitzt ein **Statuspunkt** für
   Claude Code (bei den Stilen „Zwei Balken“ und „Nur Zahlen“ rechts daneben):
-  - violett, voll und pulsierend: Claude Code arbeitet (ruhig bei „Bewegung reduzieren“ und im
+  - korallenfarben, voll und pulsierend: Claude Code arbeitet (ruhig bei „Bewegung reduzieren“ und im
     Stromsparmodus; die Animation läuft im WindowServer und kostet die App keine Rechenzeit)
-  - hellblau, halb gefüllt: Claude Code wartet auf eine Antwort (Rückfrage oder Berechtigung)
+  - gelb, halb gefüllt: Claude Code wartet auf eine Antwort (Rückfrage oder Berechtigung)
   - grün, als Ring: frei
   - kein Punkt: gerade läuft keine Claude-Code-Sitzung
 
   Jeder Zustand hat eine eigene Form, damit er auch ohne Farbe lesbar ist; Rot bleibt dem fast
-  aufgebrauchten Limit vorbehalten. Bei mehreren Sitzungen gilt Hellblau vor Violett vor Grün.
+  aufgebrauchten Limit vorbehalten. Bei mehreren Sitzungen gilt Gelb vor Koralle vor Grün.
 - **Popover (Linksklick):** großer Ring für die Sitzung mit Reset-Countdown, Karten für die
   Wochenlimits (alle Modelle und modellspezifisch), Wochennutzung nach Bereich und die laufenden
   Claude-Code-Sitzungen mit Projektordner und Zustand. Sitzungen, die Claude Code im Hintergrund
@@ -118,7 +118,7 @@ heraus.
 Die Hooks nutzen Ereignisse, die es in aktuellen Claude-Code-Versionen gibt (getestet mit 2.1.294).
 Mit deutlich älteren Versionen, etwa über geteilte Dotfiles, besser nicht einrichten.
 
-Grenzen: Nach dem Genehmigen einer Berechtigung bleibt der Punkt hellblau, bis das Werkzeug fertig ist.
+Grenzen: Nach dem Genehmigen einer Berechtigung bleibt der Punkt gelb, bis das Werkzeug fertig ist.
 Nach einem Abbruch mit Esc wird er erst nach etwa einer Minute wieder grün.
 
 ## Updates

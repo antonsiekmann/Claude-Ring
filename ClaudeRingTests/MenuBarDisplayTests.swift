@@ -197,8 +197,10 @@ struct MenuBarIconRendererTests {
             of: MenuBarIconRenderer.image(for: display, drawsDot: false), at: center
         )
 
-        // Working is purple, not red: red stays reserved for a nearly used-up limit.
-        #expect(drawn.blueComponent > drawn.greenComponent + 0.2 && drawn.redComponent > drawn.greenComponent && drawn.alphaComponent > 0.9)
+        // Working is coral, neither the red of a nearly used-up limit (far less
+        // green) nor the warning orange (no blue).
+        #expect(drawn.redComponent > drawn.greenComponent + 0.2 && drawn.greenComponent > 0.38
+            && drawn.blueComponent > 0.25 && drawn.alphaComponent > 0.9)
         #expect(left.alphaComponent < 0.1)
     }
 

@@ -4,6 +4,13 @@ Ein Abschnitt pro Version, die neueste oben. Beim Release übernimmt GitHub Acti
 getaggten Version als Text der Release-Seite; „Was ist neu?“ in der App führt dorthin. Ohne Abschnitt
 für die Version bricht der Release-Job ab.
 
+## 1.2.2
+
+### Geändert
+
+- Neue Farben für den Statuspunkt: Koralle, solange Claude Code arbeitet, Gelb, wenn es auf eine
+  Antwort wartet, und weiterhin Grün, wenn es frei ist. Vorher waren es Violett und Hellblau.
+
 ## 1.2.1
 
 ### Geändert

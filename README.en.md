@@ -47,13 +47,13 @@ Applications. Open it again any time via **right-click ▸ Setup…** or **Setti
   e.g. `◔ 87%`. Only the ring changes color: green, orange from the warning threshold, red from the
   critical threshold (80 and 95% used by default; the same thresholds trigger the notifications). In
   the middle of the ring sits a **status dot** for Claude Code:
-  - purple, filled and pulsing: Claude Code is working (calm with Reduce Motion and in Low Power Mode)
-  - light blue, half filled: Claude Code is waiting for your answer (a question or a permission)
+  - coral, filled and pulsing: Claude Code is working (calm with Reduce Motion and in Low Power Mode)
+  - yellow, half filled: Claude Code is waiting for your answer (a question or a permission)
   - green, a ring: idle
   - no dot: no Claude Code session is running
 
-  Every state has its own shape, so it reads without color too. With several sessions, light blue wins
-  over purple over green.
+  Every state has its own shape, so it reads without color too. With several sessions, yellow wins
+  over coral over green.
 - **Popover (click):** a large ring for the session with a reset countdown, cards for the weekly limits,
   weekly usage by area and the running Claude Code sessions.
 - **Menu (right-click):** Settings…, Refresh Now, Check for Updates…, Setup…, Quit.
