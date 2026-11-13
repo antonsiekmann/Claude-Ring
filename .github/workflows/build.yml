@@ -30,8 +30,20 @@ jobs:
 
       # The tests check German texts, the source language. Runners are English,
       # and since the app is localized it would follow the runner's language.
+      # Failing tests also show up as an annotation on the run's page, which,
+      # unlike the log, can be read without signing in.
       - name: Test
-        run: xcodebuild -project ClaudeRing.xcodeproj -scheme ClaudeRing -destination 'platform=macOS' -testLanguage de -testRegion DE test
+        shell: bash
+        run: |
+          set -o pipefail
+          if ! xcodebuild -project ClaudeRing.xcodeproj -scheme ClaudeRing -destination 'platform=macOS' \
+              -testLanguage de -testRegion DE test 2>&1 | tee "$RUNNER_TEMP/test.log"; then
+            failures=$(grep -E "error:|failed on|recorded an issue" "$RUNNER_TEMP/test.log" | grep -v "^ld: warning" | head -30)
+            failures=${failures:0:4000}
+            failures=${failures//'%'/'%25'}; failures=${failures//$'\r'/'%0D'}; failures=${failures//$'\n'/'%0A'}
+            echo "::error title=Failed tests::${failures}"
+            exit 1
+          fi
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')
