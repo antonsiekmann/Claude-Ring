@@ -4,6 +4,13 @@ Ein Abschnitt pro Version, die neueste oben. Beim Release übernimmt GitHub Acti
 getaggten Version als Text der Release-Seite; „Was ist neu?“ in der App führt dorthin. Ohne Abschnitt
 für die Version bricht der Release-Job ab.
 
+## 1.2.1
+
+### Geändert
+
+- Updates öffnen das Disk-Image mit `diskutil image attach` statt mit `hdiutil`, das macOS 27 als
+  veraltet meldet. Unter macOS 26 funktioniert das Update genauso wie bisher.
+
 ## 1.2.0
 
 ### Einfacher einrichten

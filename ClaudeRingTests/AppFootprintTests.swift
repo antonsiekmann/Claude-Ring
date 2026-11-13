@@ -94,32 +94,23 @@ struct AppFootprintTests {
 
     @Test func `Ejects a disk image left attached, without touching what it links to`() throws {
         let outside = try create("outside/keep-me")
-        let source = home.appending(path: "image-source", directoryHint: .isDirectory)
-        try fileManager.createDirectory(at: source, withIntermediateDirectories: true)
-        try Data("x".utf8).write(to: source.appending(path: "file"))
-        try fileManager.createSymbolicLink(at: source.appending(path: "link"), withDestinationURL: outside.deletingLastPathComponent())
         let image = home.appending(path: "test.dmg")
-        #expect(run("/usr/bin/hdiutil", "create", "-quiet", "-srcfolder", source.path, "-fs", "HFS+", "-format", "UDZO", image.path))
+        try TestDiskImage.make(at: image, files: ["file": Data("x".utf8)],
+                               links: ["link": outside.deletingLastPathComponent()])
 
         let workspace = footprint.updatesDirectory.appending(path: UUID().uuidString, directoryHint: .isDirectory)
         let mountPoint = workspace.appending(path: UpdateInstaller.mountFolderName, directoryHint: .isDirectory)
         try fileManager.createDirectory(at: mountPoint, withIntermediateDirectories: true)
-        #expect(run("/usr/bin/hdiutil", "attach", image.path, "-readonly", "-nobrowse", "-noautoopen", "-mountpoint", mountPoint.path))
+        try UpdateInstaller.attach(image, at: mountPoint)
         // Only for a failing test: never leave the image attached.
-        defer { if exists(mountPoint) { _ = run("/usr/bin/hdiutil", "detach", mountPoint.path, "-quiet", "-force") } }
-        #expect(exists(mountPoint.appending(path: "file")))
+        defer { TestDiskImage.eject(mountPoint) }
+        #expect(exists(mountPoint.appending(path: "link/keep-me")))
 
         let failures = footprint.removeUpdateWorkspaces()
 
         #expect(failures.isEmpty)
         #expect(!exists(workspace))
         #expect(exists(outside))
-    }
-
-    private func run(_ tool: String, _ arguments: String...) -> Bool {
-        guard let process = try? Process.run(URL(filePath: tool), arguments: arguments) else { return false }
-        process.waitUntilExit()
-        return process.terminationStatus == 0
     }
 
     @Test func `Keeps the preferences file until the app quits`() throws {

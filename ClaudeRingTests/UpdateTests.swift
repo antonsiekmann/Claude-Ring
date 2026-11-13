@@ -166,6 +166,43 @@ struct UpdateInstallerTests {
         #expect(try UpdateInstaller.sha256Hex(of: file) == "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad")
     }
 
+    /// A work folder as `install` makes it, with the disk image attached.
+    private func attachedWorkspace(files: [String: Data]) throws -> (workspace: URL, mountPoint: URL) {
+        let image = root.appending(path: "test.dmg")
+        try TestDiskImage.make(at: image, files: files)
+        let workspace = root.appending(path: "workspace", directoryHint: .isDirectory)
+        let mountPoint = workspace.appending(path: UpdateInstaller.mountFolderName, directoryHint: .isDirectory)
+        try fileManager.createDirectory(at: mountPoint, withIntermediateDirectories: true)
+        try UpdateInstaller.attach(image, at: mountPoint)
+        return (workspace, mountPoint)
+    }
+
+    @Test func `Attaches the disk image read-only and hidden, then ejects it`() throws {
+        let (workspace, mountPoint) = try attachedWorkspace(files: ["file": Data("x".utf8)])
+        defer { TestDiskImage.eject(mountPoint) }
+
+        let values = try URL(filePath: mountPoint.path)
+            .resourceValues(forKeys: [.isVolumeKey, .volumeIsReadOnlyKey, .volumeIsBrowsableKey])
+        #expect(values.isVolume == true)
+        #expect(values.volumeIsReadOnly == true)
+        #expect(values.volumeIsBrowsable == false)
+        #expect(fileManager.contents(atPath: mountPoint.appending(path: "file").path) == Data("x".utf8))
+
+        #expect(UpdateInstaller.removeWorkspace(workspace))
+        #expect(!TestDiskImage.isMounted(mountPoint))
+        #expect(!fileManager.fileExists(atPath: workspace.path))
+    }
+
+    @Test func `Ejects the disk image even while a file on it is open`() throws {
+        let (workspace, mountPoint) = try attachedWorkspace(files: ["file": Data("x".utf8)])
+        defer { TestDiskImage.eject(mountPoint) }
+        let handle = try FileHandle(forReadingFrom: mountPoint.appending(path: "file"))
+        defer { try? handle.close() }
+
+        #expect(UpdateInstaller.removeWorkspace(workspace))
+        #expect(!TestDiskImage.isMounted(mountPoint))
+    }
+
     @Test func `Replaces only installed, writable copies`() throws {
         let home = root.appending(path: "home", directoryHint: .isDirectory)
         let applications = home.appending(path: "Applications", directoryHint: .isDirectory)

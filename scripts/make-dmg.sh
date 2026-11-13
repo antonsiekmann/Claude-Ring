@@ -76,13 +76,14 @@ rm -f "$DMG"
   -D icon="$BUILT_APP/Contents/Resources/AppIcon.icns" \
   "$VOLUME_NAME" "$DMG"
 
-# Opens the DMG with the update function's hdiutil flags and checks what it
-# relies on, so a release fails here instead of in the app.
+# Opens the DMG the way the update function does (diskutil image attach, which
+# replaces hdiutil attach from macOS 27 on) and checks what it relies on, so a
+# release fails here instead of in the app.
 echo "Prüfe das DMG …"
 rm -rf "$MOUNT"
 mkdir -p "$MOUNT"
-hdiutil attach "$DMG" -readonly -nobrowse -noautoopen -mountpoint "$MOUNT" >/dev/null
-trap 'hdiutil detach -quiet "$MOUNT" || hdiutil detach -quiet -force "$MOUNT"' EXIT
+diskutil image attach --readOnly --mountOptions nobrowse --mountPoint "$MOUNT" "$DMG" </dev/null >/dev/null
+trap 'diskutil eject "$MOUNT" >/dev/null || diskutil eject force "$MOUNT" >/dev/null' EXIT
 fail() {
   echo "Fehler im DMG: $*" >&2
   rm -f "$DMG"
@@ -100,9 +101,11 @@ codesign --verify --deep --strict "$MOUNTED_APP" || fail "Die Signatur ist ungü
 for file in .DS_Store .background.tiff .VolumeIcon.icns; do
   [ -f "$MOUNT/$file" ] || fail "$file fehlt."
 done
-hdiutil detach -quiet "$MOUNT"
+diskutil eject "$MOUNT" >/dev/null
 trap - EXIT
 rmdir "$MOUNT"
 
+# Checks the image's checksums. diskutil has no counterpart, and macOS 27 does
+# not deprecate hdiutil verify.
 hdiutil verify -quiet "$DMG"
 echo "Fertig: $DMG ($(du -h "$DMG" | cut -f1))"

@@ -117,8 +117,7 @@ struct UpdateInstaller: Sendable {
 
         let mountPoint = workspace.appending(path: Self.mountFolderName, directoryHint: .isDirectory)
         try FileManager.default.createDirectory(at: mountPoint, withIntermediateDirectories: false)
-        try Self.run("/usr/bin/hdiutil", ["attach", image.path, "-readonly", "-nobrowse", "-noautoopen",
-                                          "-mountpoint", mountPoint.path], else: .mountFailed)
+        try Self.attach(image, at: mountPoint)
         defer { Self.detach(mountPoint) }
 
         let mountedApp = mountPoint.appending(path: Self.appNameInImage, directoryHint: .isDirectory)
@@ -238,9 +237,21 @@ struct UpdateInstaller: Sendable {
 
     // MARK: - Tools
 
+    /// `diskutil image` ships with macOS 26 and replaces `hdiutil attach`,
+    /// which macOS 27 marks as deprecated.
+    private static let diskutil = "/usr/sbin/diskutil"
+
+    /// Attaches the disk image read-only at `mountPoint`, hidden from the
+    /// Finder. Eject it with `removeWorkspace(_:)`.
+    static func attach(_ image: URL, at mountPoint: URL) throws {
+        try run(diskutil, ["image", "attach", "--readOnly", "--mountOptions", "nobrowse",
+                           "--mountPoint", mountPoint.path, image.path], else: .mountFailed)
+    }
+
+    /// Ejects the disk image, by force if a process still holds a file on it.
     private static func detach(_ mountPoint: URL) {
-        if (try? run("/usr/bin/hdiutil", ["detach", mountPoint.path, "-quiet"], else: .mountFailed)) == nil {
-            try? run("/usr/bin/hdiutil", ["detach", mountPoint.path, "-quiet", "-force"], else: .mountFailed)
+        for arguments in [["eject"], ["eject", "force"]] where isMounted(mountPoint) {
+            try? run(diskutil, arguments + [mountPoint.path], else: .mountFailed)
         }
     }
 
