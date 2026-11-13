@@ -54,12 +54,9 @@ struct RefreshScheduleTests {
 
 @MainActor
 struct AppSettingsTests {
-    private func makeDefaults() -> UserDefaults {
-        let name = "AppSettingsTests-\(UUID())"
-        let defaults = UserDefaults(suiteName: name)!
-        defaults.removePersistentDomain(forName: name)
-        return defaults
-    }
+    private let store = TestDefaults()
+
+    private func makeDefaults() -> UserDefaults { store.defaults }
 
     @Test func `Starts with the documented defaults`() {
         let settings = AppSettings(defaults: makeDefaults())

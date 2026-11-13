@@ -10,15 +10,15 @@ enum UsageAPIError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidResponse:
-            "Ungültige Antwort vom Server."
+            String(localized: "Ungültige Antwort vom Server.")
         case .unauthorized:
-            "Das Claude-Code-Token ist abgelaufen oder ungültig. Bitte einmal „claude“ im Terminal starten, damit es erneuert wird."
+            String(localized: "Das Claude-Code-Token ist abgelaufen oder ungültig. Bitte einmal „claude“ im Terminal starten, damit es erneuert wird.")
         case .rateLimited:
-            "Anthropic begrenzt gerade die Abfragen der Nutzung. Angezeigt wird der letzte Stand."
+            String(localized: "Anthropic begrenzt gerade die Abfragen der Nutzung. Angezeigt wird der letzte Stand.")
         case .httpStatus(let code):
-            "Server antwortete mit HTTP \(code)."
+            String(localized: "Server antwortete mit HTTP \(code).")
         case .decoding(let error):
-            "Antwort konnte nicht gelesen werden: \(error.localizedDescription)"
+            String(localized: "Antwort konnte nicht gelesen werden: \(error.localizedDescription)")
         }
     }
 }
@@ -45,9 +45,17 @@ struct UsageAPIClient: Sendable {
 
     private let session: URLSession
 
-    /// The default session is ephemeral: no response cache or cookies on disk.
-    init(session: URLSession = URLSession(configuration: .ephemeral)) {
+    init(session: URLSession = UsageAPIClient.makeSession()) {
         self.session = session
+    }
+
+    /// Ephemeral: no response cache or cookies on disk. After waking up the
+    /// request waits up to a minute for the network instead of failing at once.
+    static func makeSession() -> URLSession {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.waitsForConnectivity = true
+        configuration.timeoutIntervalForResource = 60
+        return URLSession(configuration: configuration)
     }
 
     func fetchUsage(accessToken: String) async throws -> UsageResponse {

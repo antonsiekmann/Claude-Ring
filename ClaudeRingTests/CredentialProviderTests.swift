@@ -104,7 +104,7 @@ struct CredentialProviderTests {
         _ = try await provider.credentials()
         clock.advance(by: 90) // within 60 s of expiry → expired, and the last read is 90 s ago
         #expect(try await provider.credentials().accessToken == "old")
-        clock.advance(by: 30) // only 30 s since the last read
+        clock.advance(by: 20) // only 20 s since the last read, still before the expiry
         #expect(try await provider.credentials().accessToken == "old")
         #expect(await keychain.reads == 2)
 

@@ -10,6 +10,8 @@ struct UsagePopoverView: View {
     let sessions: ClaudeSessionStore
     let updater: AppUpdater
     let openSettings: () -> Void
+    /// Offers setting up the status dot right here while it isn't.
+    var installer: HookInstaller?
 
     /// Cards inside derive their corner radius from this shape, so they stay
     /// concentric with the popover.
@@ -22,29 +24,42 @@ struct UsagePopoverView: View {
 
             if let snapshot = monitor.snapshot {
                 if let session = snapshot.session {
-                    SessionHero(info: session)
+                    SessionHero(info: session, thresholds: settings.thresholds)
                 }
                 if let weekly = snapshot.weekly {
-                    UsageCard(info: weekly)
+                    UsageCard(info: weekly, thresholds: settings.thresholds)
                 }
                 if settings.showsModelLimits {
                     ForEach(snapshot.scopedWeekly) { info in
-                        UsageCard(info: info)
+                        UsageCard(info: info, thresholds: settings.thresholds)
                     }
                 }
                 if settings.showsBreakdown && !snapshot.breakdown.isEmpty {
                     BreakdownCard(rows: snapshot.breakdown)
                 }
-            } else if monitor.errorMessage == nil {
+            } else if monitor.problem == nil {
                 LoadingRow()
+            }
+
+            if let installer, installer.status != .installed, !settings.dismissedStatusDotTip {
+                StatusDotTip(installer: installer, dismiss: { settings.dismissedStatusDotTip = true })
             }
 
             if settings.showsClaudeSessions && !sessions.sessions.isEmpty {
                 ClaudeSessionsCard(sessions: sessions.sessions)
             }
 
-            if let error = monitor.errorMessage {
-                ErrorBanner(message: error, nextAttempt: monitor.nextAttempt)
+            if let problem = monitor.problem {
+                if monitor.needsAttention {
+                    ErrorBanner(
+                        message: problem.message,
+                        nextAttempt: monitor.nextAttempt,
+                        hint: problem.isSignIn ? String(localized: "Claude Ring erkennt die Anmeldung von selbst.") : nil
+                    )
+                } else {
+                    // Throttled or briefly offline: the data shown stays valid.
+                    NoticeRow(problem: problem, nextAttempt: monitor.nextAttempt)
+                }
             }
 
             if let release = updater.availableRelease, updater.showsBanner {
@@ -103,10 +118,11 @@ private struct LoadingRow: View {
 /// The current 5-hour session: a large ring with the remaining share.
 private struct SessionHero: View {
     let info: UsageWindowInfo
+    let thresholds: UsageThresholds
 
     var body: some View {
         HStack(spacing: 16) {
-            UsageRing(remainingPercent: info.remainingPercent, level: info.level)
+            UsageRing(remainingPercent: info.remainingPercent, level: info.level(thresholds))
                 .frame(width: 96, height: 96)
             VStack(alignment: .leading, spacing: 4) {
                 Text("Aktuelle Sitzung")
@@ -190,6 +206,7 @@ private extension View {
 /// A weekly limit: title, remaining share, slim bar and reset time.
 private struct UsageCard: View {
     let info: UsageWindowInfo
+    let thresholds: UsageThresholds
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -201,7 +218,7 @@ private struct UsageCard: View {
                     .font(.subheadline.weight(.semibold))
                     .monospacedDigit()
             }
-            UsageBar(fraction: info.remainingPercent / 100, color: info.level.color)
+            UsageBar(fraction: info.remainingPercent / 100, color: info.level(thresholds).color)
             HStack {
                 Text("\(Int(info.usedPercent.rounded())) % genutzt")
                 Spacer()
@@ -321,13 +338,12 @@ private struct SessionRow: View {
     }
 }
 
-/// The status dot. With "Differentiate without color" the shape differs too.
+/// The status dot, in the same shape and color as in the menu bar.
 private struct ActivityDot: View {
     let activity: ClaudeActivity
-    @Environment(\.accessibilityDifferentiateWithoutColor) private var differentiateWithoutColor
 
     var body: some View {
-        Image(systemName: differentiateWithoutColor ? activity.distinctSymbolName : "circle.fill")
+        Image(systemName: activity.distinctSymbolName)
             .font(.system(size: 9))
             .foregroundStyle(activity.color)
             .accessibilityHidden(true)
@@ -337,6 +353,7 @@ private struct ActivityDot: View {
 private struct ErrorBanner: View {
     let message: String
     let nextAttempt: Date?
+    var hint: String?
 
     var body: some View {
         Label {
@@ -344,6 +361,10 @@ private struct ErrorBanner: View {
                 Text(message)
                 if let nextAttempt {
                     Text("Nächster Versuch um \(nextAttempt, format: .dateTime.hour().minute()).")
+                        .foregroundStyle(.secondary)
+                }
+                if let hint {
+                    Text(hint)
                         .foregroundStyle(.secondary)
                 }
             }
@@ -354,6 +375,70 @@ private struct ErrorBanner: View {
                 .foregroundStyle(.orange)
         }
         .card(tint: .orange)
+    }
+}
+
+/// Shown while the status dot isn't set up, until it is or gets put away.
+private struct StatusDotTip: View {
+    let installer: HookInstaller
+    let dismiss: () -> Void
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: ClaudeActivity.waiting.distinctSymbolName)
+                .foregroundStyle(ClaudeActivity.waiting.color)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Sehen, wann Claude Code auf dich wartet")
+                    .font(.subheadline.weight(.medium))
+                Text("Ein Punkt in der Menüleiste zeigt, ob Claude Code arbeitet, auf eine Antwort wartet oder frei ist.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                if let error = installer.lastError {
+                    Text(error)
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                HStack(spacing: 12) {
+                    Button(installer.status == .needsUpdate ? "Aktualisieren" : "Einrichten") { installer.install() }
+                        .controlSize(.small)
+                    Button("Nicht mehr zeigen", action: dismiss)
+                        .buttonStyle(.link)
+                        .controlSize(.small)
+                }
+            }
+            Spacer(minLength: 0)
+        }
+        .card()
+    }
+}
+
+/// A calm hint for problems nobody needs to act on; the footer shows the
+/// time of the data in view.
+private struct NoticeRow: View {
+    let problem: UsageProblem
+    let nextAttempt: Date?
+
+    var body: some View {
+        Label {
+            Group {
+                if let nextAttempt {
+                    Text("\(problem.message) Nächster Versuch um \(nextAttempt, format: .dateTime.hour().minute()).")
+                } else {
+                    Text(problem.message)
+                }
+            }
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            .fixedSize(horizontal: false, vertical: true)
+        } icon: {
+            Image(systemName: problem == .offline ? "wifi.slash" : "hourglass")
+                .foregroundStyle(.secondary)
+        }
+        .padding(.horizontal, 4)
+        .accessibilityElement(children: .combine)
     }
 }
 

@@ -167,6 +167,8 @@ struct HookRemovalTests {
 
 @MainActor
 struct AppUninstallerTests {
+    private let store = TestDefaults()
+
     @Test func `Removes hooks, files and preferences, then quits`() throws {
         let home = FileManager.default.temporaryDirectory.appending(path: "uninstall-\(UUID())", directoryHint: .isDirectory)
         let paths = HookInstaller.Paths(home: home)
@@ -184,7 +186,7 @@ struct AppUninstallerTests {
 
         var stopped = false
         var terminated = false
-        let defaults = UserDefaults(suiteName: "uninstall-\(UUID())")!
+        let defaults = store.defaults
         let uninstaller = AppUninstaller(
             footprint: footprint,
             hookInstaller: hookInstaller,
@@ -216,7 +218,7 @@ struct AppUninstallerTests {
         try Data("{ broken".utf8).write(to: paths.claudeSettings)
 
         var terminated = false
-        let defaults = UserDefaults(suiteName: "uninstall-\(UUID())")!
+        let defaults = store.defaults
         let uninstaller = AppUninstaller(
             footprint: footprint,
             hookInstaller: HookInstaller(paths: paths),
@@ -262,8 +264,10 @@ struct PreferencesCleanupTests {
 }
 
 struct UsageSnapshotCacheTests {
+    private let store = TestDefaults()
+
     @Test func `Restores the last usage data`() throws {
-        let defaults = UserDefaults(suiteName: "cache-\(UUID())")!
+        let defaults = store.defaults
         let cache = UsageSnapshotCache(defaults: defaults)
         let response = try UsageAPIClient.makeDecoder().decode(UsageResponse.self, from: Data(#"""
         { "limits": [ { "kind": "session", "percent": 13, "resets_at": "2026-10-08T18:00:00Z" } ],

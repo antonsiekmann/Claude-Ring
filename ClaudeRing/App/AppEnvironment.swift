@@ -15,4 +15,10 @@ enum AppEnvironment {
         let path = bundleURL.path
         return path.hasPrefix("/Applications/") || path.hasPrefix(home.path + "/Applications/")
     }
+
+    /// A build from Xcode, which must not move itself into „Programme“.
+    static func isDevelopmentBuild(bundleURL: URL = Bundle.main.bundleURL) -> Bool {
+        let path = bundleURL.path
+        return path.contains("/DerivedData/") || path.contains("/Build/Products/")
+    }
 }

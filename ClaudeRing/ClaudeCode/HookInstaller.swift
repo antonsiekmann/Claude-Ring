@@ -8,15 +8,15 @@ enum HookInstallerError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidSettings:
-            "„~/.claude/settings.json“ ist kein gültiges JSON. Die App ändert die Datei deshalb nicht."
+            String(localized: "„~/.claude/settings.json“ ist kein gültiges JSON. Die App ändert die Datei deshalb nicht.")
         case .settingsChanged:
-            "Claude Code hat seine Einstellungen gerade geändert. Bitte noch einmal versuchen."
+            String(localized: "Claude Code hat seine Einstellungen gerade geändert. Bitte noch einmal versuchen.")
         }
     }
 }
 
 /// Installs the hook script and registers it in Claude Code's settings, on
-/// request only. Before every change it backs up the settings file.
+/// request only. Before its first change it backs up the settings file once.
 @MainActor
 @Observable
 final class HookInstaller {
@@ -32,6 +32,8 @@ final class HookInstaller {
         let script: URL
         let sessions: URL
         let backups: URL
+        /// The one backup: Claude Code's settings before this app first changed them.
+        let backup: URL
         let claudeSettings: URL
 
         init(home: URL) {
@@ -39,6 +41,7 @@ final class HookInstaller {
             script = appSupport.appending(path: "claude-ring-hook.sh")
             sessions = appSupport.appending(path: "Sessions", directoryHint: .isDirectory)
             backups = appSupport.appending(path: "Backups", directoryHint: .isDirectory)
+            backup = backups.appending(path: "settings-original.json")
             claudeSettings = home.appending(path: ".claude/settings.json")
         }
 
@@ -58,6 +61,7 @@ final class HookInstaller {
     }
 
     func refresh() {
+        lastBackup = fileManager.fileExists(atPath: paths.backup.path) ? paths.backup : nil
         guard let settings = try? readSettings() else {
             status = .notInstalled
             return
@@ -146,7 +150,7 @@ final class HookInstaller {
         guard updated != current else { return }
 
         if let original {
-            lastBackup = try backUp(original)
+            try ensureBackup(of: original)
         } else {
             try fileManager.createDirectory(
                 at: url.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700]
@@ -186,27 +190,39 @@ final class HookInstaller {
         }
     }
 
-    /// Keeps the newest few backups; they are full copies of the settings.
-    private static let backupLimit = 5
+    // MARK: - Backup
 
-    private func backUp(_ data: Data) throws -> URL {
+    /// Writes the one backup unless it exists. It is never replaced, so
+    /// setting up and removing the hooks again adds no files.
+    private func ensureBackup(of original: Data) throws {
+        mergeEarlierBackups()
+        guard !fileManager.fileExists(atPath: paths.backup.path) else { return }
         try fileManager.createDirectory(at: paths.backups, withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700])
-        let stamp = Date.now.formatted(.iso8601.year().month().day().dateSeparator(.omitted)
-            .time(includingFractionalSeconds: false).timeSeparator(.omitted))
-        let url = paths.backups.appending(path: "settings-\(stamp)-\(UUID().uuidString.prefix(6)).json")
-        try writeAtomically(data, to: url, permissions: 0o600)
+        try writeAtomically(original, to: paths.backup, permissions: 0o600)
+    }
 
-        let backups = try fileManager.contentsOfDirectory(at: paths.backups, includingPropertiesForKeys: [.creationDateKey])
-            .filter { $0.lastPathComponent.hasPrefix("settings-") }
+    /// Earlier versions wrote a new timestamped backup before every change.
+    /// Keeps the oldest of them as the one backup and deletes the rest.
+    func consolidateBackups() {
+        mergeEarlierBackups()
+        refresh()
+    }
+
+    private func mergeEarlierBackups() {
+        let earlier = ((try? fileManager.contentsOfDirectory(at: paths.backups, includingPropertiesForKeys: [.creationDateKey])) ?? [])
+            .filter { $0.lastPathComponent.hasPrefix("settings-") && $0.lastPathComponent != paths.backup.lastPathComponent }
             .sorted { lhs, rhs in
                 let left = (try? lhs.resourceValues(forKeys: [.creationDateKey]).creationDate) ?? .distantPast
                 let right = (try? rhs.resourceValues(forKeys: [.creationDateKey]).creationDate) ?? .distantPast
                 return (left, lhs.lastPathComponent) < (right, rhs.lastPathComponent)
             }
-        for old in backups.dropLast(Self.backupLimit) where old != url {
-            try? fileManager.removeItem(at: old)
+        guard let oldest = earlier.first else { return }
+        if !fileManager.fileExists(atPath: paths.backup.path) {
+            try? fileManager.moveItem(at: oldest, to: paths.backup)
         }
-        return url
+        for url in earlier where fileManager.fileExists(atPath: url.path) {
+            try? fileManager.removeItem(at: url)
+        }
     }
 
     private func perform(_ work: () throws -> Void) {

@@ -5,11 +5,15 @@ struct GeneralSettingsView: View {
     let launchAtLogin: LaunchAtLogin
     let uninstaller: AppUninstaller
     let updater: AppUpdater
+    var openWelcome: () -> Void = {}
 
     var body: some View {
         Form {
             Section("Start") {
                 LaunchAtLoginRow(launchAtLogin: launchAtLogin)
+                LabeledContent("Einrichtung") {
+                    Button("Willkommensfenster öffnen …", action: openWelcome)
+                }
             }
 
             Section {

@@ -22,10 +22,10 @@ enum MenuBarIconRenderer {
 
     /// - Parameter drawsDot: False when the dot is shown as an animated layer
     ///   on top of the image instead; the space for it stays reserved.
-    static func image(for display: MenuBarDisplay, differentiateWithoutColor: Bool, drawsDot: Bool = true) -> NSImage {
+    static func image(for display: MenuBarDisplay, drawsDot: Bool = true) -> NSImage {
         let layout = Layout(display: display)
         let image = NSImage(size: NSSize(width: layout.width, height: height), flipped: false) { _ in
-            draw(display, layout: layout, differentiateWithoutColor: differentiateWithoutColor, drawsDot: drawsDot)
+            draw(display, layout: layout, drawsDot: drawsDot)
             return true
         }
         image.isTemplate = display.isTemplate
@@ -79,7 +79,7 @@ enum MenuBarIconRenderer {
 
     // MARK: - Drawing
 
-    private static func draw(_ display: MenuBarDisplay, layout: Layout, differentiateWithoutColor: Bool, drawsDot: Bool) {
+    private static func draw(_ display: MenuBarDisplay, layout: Layout, drawsDot: Bool) {
         // Template images only use their alpha channel, so draw them in black.
         let foreground: NSColor = display.isTemplate ? .black : .labelColor
         let track = foreground.withAlphaComponent(0.25)
@@ -107,7 +107,7 @@ enum MenuBarIconRenderer {
         display.text.draw(at: NSPoint(x: x, y: (height - textSize.height) / 2), withAttributes: attributes)
 
         if drawsDot, let activity = display.activity, let rect = dotRect(for: display) {
-            drawDot(activity, in: rect, differentiateWithoutColor: differentiateWithoutColor)
+            drawDot(activity, in: rect)
         }
     }
 
@@ -150,16 +150,16 @@ enum MenuBarIconRenderer {
         NSBezierPath(roundedRect: filled, xRadius: radius, yRadius: radius).fill()
     }
 
-    /// With "Differentiate without color" each state also gets its own shape:
-    /// filled while working, half filled while waiting, hollow when idle.
-    private static func drawDot(_ activity: ClaudeActivity, in rect: NSRect, differentiateWithoutColor: Bool) {
+    /// Each state has its own shape, not only its own color: filled while
+    /// working, half filled while waiting, hollow when idle. A faint rim keeps
+    /// the dot visible on the transparent menu bar over any wallpaper.
+    private static func drawDot(_ activity: ClaudeActivity, in rect: NSRect) {
         let color = activity.nsColor
         let circle = NSBezierPath(ovalIn: rect)
-        guard differentiateWithoutColor else {
-            color.setFill()
-            circle.fill()
-            return
-        }
+        let rim = NSBezierPath(ovalIn: rect.insetBy(dx: -0.4, dy: -0.4))
+        rim.lineWidth = 0.6
+        NSColor.labelColor.withAlphaComponent(0.25).setStroke()
+        rim.stroke()
         let outline = NSBezierPath(ovalIn: rect.insetBy(dx: 0.6, dy: 0.6))
         outline.lineWidth = 1.2
         color.setStroke()

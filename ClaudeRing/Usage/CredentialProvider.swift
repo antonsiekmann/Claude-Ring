@@ -31,19 +31,23 @@ enum CredentialError: LocalizedError, Equatable {
     case timedOut
     case keychainFailure(Int32)
     case malformed
+    /// Claude Code hasn't renewed its token yet; it does so when it runs.
+    case expired
 
     var errorDescription: String? {
         switch self {
         case .notFound:
-            "Keine Claude-Code-Anmeldung gefunden. Bitte einmal „claude“ im Terminal starten und anmelden."
+            String(localized: "Keine Claude-Code-Anmeldung gefunden. Bitte einmal „claude“ im Terminal starten und anmelden.")
         case .accessDenied:
-            "Zugriff auf den Schlüsselbund wurde verweigert."
+            String(localized: "Zugriff auf den Schlüsselbund wurde verweigert.")
         case .timedOut:
-            "Der Schlüsselbund hat nicht rechtzeitig geantwortet."
+            String(localized: "Der Schlüsselbund hat nicht rechtzeitig geantwortet.")
         case .keychainFailure(let status):
-            "Schlüsselbund-Fehler (\(status))."
+            String(localized: "Schlüsselbund-Fehler (\(status)).")
         case .malformed:
-            "Die gespeicherten Claude-Code-Zugangsdaten konnten nicht gelesen werden."
+            String(localized: "Die gespeicherten Claude-Code-Zugangsdaten konnten nicht gelesen werden.")
+        case .expired:
+            String(localized: "Das Claude-Code-Token ist abgelaufen. Bitte einmal „claude“ im Terminal starten, damit es erneuert wird.")
         }
     }
 }
@@ -101,6 +105,37 @@ struct SecurityToolKeychainReader: KeychainReading {
         case let status:
             throw CredentialError.keychainFailure(status)
         }
+    }
+}
+
+/// Tells whether Claude Code has stored a login, without reading the secret.
+protocol LoginChecking: Sendable {
+    func hasLogin() async -> Bool
+}
+
+/// Asks `security` only for the attributes of Claude Code's keychain item.
+/// Attributes never need the keychain password, so unlike reading the secret
+/// this can run every few seconds without ever showing a dialog.
+struct SecurityToolLoginChecker: LoginChecking {
+    var fallbackFileURL = FileManager.default.homeDirectoryForCurrentUser.appending(path: ".claude/.credentials.json")
+
+    func hasLogin() async -> Bool {
+        let fallbackFileURL = fallbackFileURL
+        return await Task.detached(priority: .utility) {
+            if FileManager.default.fileExists(atPath: fallbackFileURL.path) { return true }
+            let process = Process()
+            process.executableURL = URL(filePath: "/usr/bin/security")
+            process.arguments = ["find-generic-password", "-s", SecurityToolKeychainReader.serviceName]
+            process.standardInput = FileHandle.nullDevice
+            process.standardOutput = FileHandle.nullDevice
+            process.standardError = FileHandle.nullDevice
+            do { try process.run() } catch { return false }
+            DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 10) {
+                if process.isRunning { process.terminate() }
+            }
+            process.waitUntilExit()
+            return process.terminationReason == .exit && process.terminationStatus == 0
+        }.value
     }
 }
 
@@ -169,7 +204,12 @@ actor CredentialProvider {
     }
 
     func credentials() async throws -> ClaudeCredentials.OAuth {
-        if let cached, !Self.isExpired(cached, at: now()) || reloadedRecently {
+        if let cached, !Self.isExpired(cached, at: now()) {
+            return cached
+        }
+        if let cached, reloadedRecently {
+            // Just read: a token past its expiry would only earn a 401.
+            if Self.hasExpired(cached, at: now()) { throw CredentialError.expired }
             return cached
         }
         return try await reload()
@@ -187,6 +227,12 @@ actor CredentialProvider {
     nonisolated static func isExpired(_ credentials: ClaudeCredentials.OAuth, at date: Date) -> Bool {
         guard let expiry = credentials.expiryDate else { return false }
         return expiry.addingTimeInterval(-60) <= date
+    }
+
+    /// Past the expiry itself, without the margin of `isExpired`.
+    nonisolated static func hasExpired(_ credentials: ClaudeCredentials.OAuth, at date: Date) -> Bool {
+        guard let expiry = credentials.expiryDate else { return false }
+        return expiry <= date
     }
 
     private var reloadedRecently: Bool {
@@ -212,6 +258,9 @@ actor CredentialProvider {
             throw CredentialError.malformed
         }
         cached = decoded.claudeAiOauth
+        if Self.hasExpired(decoded.claudeAiOauth, at: now()) {
+            throw CredentialError.expired
+        }
         return decoded.claudeAiOauth
     }
 }

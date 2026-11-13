@@ -8,10 +8,11 @@ import Testing
 @MainActor
 struct ViewSnapshotTests {
     nonisolated static let directory = ProcessInfo.processInfo.environment["SNAPSHOT_DIR"]
+    private let store = TestDefaults()
 
     @Test(.enabled(if: directory != nil))
     func `Render settings tabs`() throws {
-        let defaults = UserDefaults(suiteName: "snapshots-\(UUID())")!
+        let defaults = store.defaults
         let settings = AppSettings(defaults: defaults)
         let monitor = UsageMonitor(settings: settings)
         let sessions = ClaudeSessionStore()
@@ -28,7 +29,10 @@ struct ViewSnapshotTests {
                 ),
                 updater: AppUpdater(settings: settings, defaults: defaults)
             ))),
-            ("settings-menubar", AnyView(MenuBarSettingsView(settings: settings, monitor: monitor, sessions: sessions))),
+            ("settings-menubar", AnyView(MenuBarSettingsView(
+                settings: settings, monitor: monitor, sessions: sessions,
+                installer: HookInstaller(paths: .init(home: FileManager.default.temporaryDirectory.appending(path: "home-\(UUID())")))
+            ))),
             ("settings-popover", AnyView(PopoverSettingsView(settings: settings))),
             ("settings-notifications", AnyView(NotificationSettingsView(settings: settings, notifier: notifier))),
             ("settings-claudecode", AnyView(ClaudeCodeSettingsView(
@@ -44,7 +48,7 @@ struct ViewSnapshotTests {
 
     @Test(.enabled(if: directory != nil))
     func `Render popover states`() throws {
-        let defaults = UserDefaults(suiteName: "snapshots-\(UUID())")!
+        let defaults = store.defaults
         let settings = AppSettings(defaults: defaults)
         let response = try UsageAPIClient.makeDecoder().decode(UsageResponse.self, from: Data(#"""
         { "limits": [
@@ -83,10 +87,17 @@ struct ViewSnapshotTests {
         try Self.write(UsagePopoverView(monitor: loading, settings: settings, sessions: ClaudeSessionStore(directory: sessionsDirectory.appending(path: "none")), updater: updater, openSettings: {}), name: "popover-loading")
 
         let failing = UsageMonitor(settings: settings)
-        failing.showPreview(snapshot: snapshot, errorMessage: UsageAPIError.unauthorized.localizedDescription)
+        failing.showPreview(snapshot: snapshot, problem: .signIn(UsageAPIError.unauthorized.localizedDescription))
         settings.showsBreakdown = false
         settings.showsModelLimits = false
         try Self.write(UsagePopoverView(monitor: failing, settings: settings, sessions: sessions, updater: updater, openSettings: {}), name: "popover-error")
+
+        let tipInstaller = HookInstaller(paths: .init(home: FileManager.default.temporaryDirectory.appending(path: "home-\(UUID())")))
+        try Self.write(UsagePopoverView(monitor: monitor, settings: settings, sessions: sessions, updater: updater, openSettings: {}, installer: tipInstaller), name: "popover-tip")
+
+        let throttled = UsageMonitor(settings: settings)
+        throttled.showPreview(snapshot: snapshot, problem: .rateLimited, nextAttempt: .now.addingTimeInterval(900))
+        try Self.write(UsagePopoverView(monitor: throttled, settings: settings, sessions: sessions, updater: updater, openSettings: {}), name: "popover-throttled")
 
         let updating = AppUpdater(settings: settings, defaults: defaults, currentVersion: AppVersion("1.0.0"))
         updating.showPreview(release: Self.previewRelease)
@@ -95,7 +106,7 @@ struct ViewSnapshotTests {
 
     @Test(.enabled(if: directory != nil))
     func `Render update states in the general settings`() throws {
-        let defaults = UserDefaults(suiteName: "snapshots-\(UUID())")!
+        let defaults = store.defaults
         let settings = AppSettings(defaults: defaults)
         let notifier = UsageNotifier(settings: settings, defaults: defaults)
         let uninstaller = AppUninstaller(
@@ -114,6 +125,30 @@ struct ViewSnapshotTests {
         available.showPreview(release: Self.previewRelease)
         try Self.write(GeneralSettingsView(settings: settings, launchAtLogin: LaunchAtLogin(), uninstaller: uninstaller, updater: available)
             .frame(width: 520), name: "settings-general-update")
+    }
+
+    @Test(.enabled(if: directory != nil))
+    func `Render welcome window states`() throws {
+        let folder = TemporaryFolder("welcome-snapshots")
+        let installer = HookInstaller(paths: .init(home: folder.url))
+
+        let start = WelcomeModel(installer: installer, launchAtLogin: LaunchAtLogin(), needsMove: true)
+        start.showPreview(login: .signedOut)
+        try Self.write(WelcomeView(model: start, finish: {}, later: {}), name: "welcome-start")
+
+        let missing = WelcomeModel(installer: installer, launchAtLogin: LaunchAtLogin(), needsMove: false)
+        missing.showPreview(login: .claudeCodeMissing, iconIsHidden: true)
+        missing.setsUpStatusDot = false
+        missing.opensAtLogin = false
+        try Self.write(WelcomeView(model: missing, finish: {}, later: {}), name: "welcome-missing-hidden")
+
+        let settingsFile = folder.url.appending(path: ".claude/settings.json")
+        try FileManager.default.createDirectory(at: settingsFile.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try Data("{}\n".utf8).write(to: settingsFile)
+        installer.install()
+        let done = WelcomeModel(installer: installer, launchAtLogin: LaunchAtLogin(), needsMove: false)
+        done.showPreview(login: .signedIn)
+        try Self.write(WelcomeView(model: done, finish: {}, later: {}), name: "welcome-done")
     }
 
     private static let previewRelease = AppRelease(

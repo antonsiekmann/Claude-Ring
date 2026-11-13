@@ -53,7 +53,7 @@ private struct HookSection: View {
         } header: {
             Text("Statusanzeige")
         } footer: {
-            Text("Für den Punkt in der Menüleiste trägt die App ein kleines Skript als Hook in „~/.claude/settings.json“ ein und sichert die Datei vorher. Andere Hooks bleiben unverändert. Das Skript merkt sich nur Ereignis, Sitzung, Projektordner und Werkzeugname, keine Eingaben oder Inhalte. Neue Claude-Code-Sitzungen melden sich sofort.")
+            Text("Für den Punkt in der Menüleiste trägt die App ein kleines Skript als Hook in „~/.claude/settings.json“ ein und sichert die Datei vor der ersten Änderung einmal. Andere Hooks bleiben unverändert. Das Skript merkt sich nur Ereignis, Sitzung, Projektordner und Werkzeugname, keine Eingaben oder Inhalte. Neue Claude-Code-Sitzungen melden sich sofort.")
                 .foregroundStyle(.secondary)
         }
     }

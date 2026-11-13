@@ -4,25 +4,27 @@ struct MenuBarSettingsView: View {
     @Bindable var settings: AppSettings
     let monitor: UsageMonitor
     let sessions: ClaudeSessionStore
+    let installer: HookInstaller
 
     var body: some View {
         Form {
             Section {
                 MenuBarPreview(display: MenuBarDisplay.make(
                     snapshot: monitor.snapshot,
-                    hasError: monitor.errorMessage != nil,
+                    hasError: monitor.needsAttention,
                     preferences: MenuBarDisplay.Preferences(
                         style: settings.menuBarStyle,
                         limit: settings.menuBarLimit,
                         value: settings.menuBarValue,
                         colorsRing: settings.colorsRing,
-                        showsStatusDot: settings.showsStatusDot
+                        showsStatusDot: settings.showsStatusDot,
+                        thresholds: settings.thresholds
                     ),
                     activity: sessions.aggregate
                 ))
             }
 
-            Section("Darstellung") {
+            Section {
                 Picker("Stil", selection: $settings.menuBarStyle) {
                     ForEach(MenuBarStyle.allCases) { style in
                         Text(style.label).tag(style)
@@ -42,25 +44,61 @@ struct MenuBarSettingsView: View {
                 .pickerStyle(.segmented)
                 Toggle("Ring und Balken einfärben", isOn: $settings.colorsRing)
                     .disabled(settings.menuBarStyle == .numbers)
+            } header: {
+                Text("Darstellung")
+            } footer: {
+                Text("Die Farben wechseln an den Schwellen aus dem Tab „Mitteilungen“.")
+                    .foregroundStyle(.secondary)
             }
 
-            Section {
-                Toggle("Claude-Code-Status anzeigen", isOn: $settings.showsStatusDot)
-            } footer: {
-                StatusLegend()
-            }
+            StatusDotSection(settings: settings, installer: installer)
         }
         .formStyle(.grouped)
+    }
+}
+
+/// The status dot works only once the hooks are set up, so until then the
+/// switch shows off and the section offers the setup right here.
+private struct StatusDotSection: View {
+    @Bindable var settings: AppSettings
+    let installer: HookInstaller
+
+    private var isInstalled: Bool { installer.status == .installed }
+
+    var body: some View {
+        Section {
+            Toggle("Claude-Code-Status anzeigen", isOn: isInstalled ? $settings.showsStatusDot : .constant(false))
+                .disabled(!isInstalled)
+            if !isInstalled {
+                LabeledContent {
+                    Button(installer.status == .needsUpdate ? "Aktualisieren" : "Einrichten") { installer.install() }
+                } label: {
+                    Text(installer.status == .needsUpdate
+                         ? "Der Statuspunkt muss aktualisiert werden."
+                         : "Der Statuspunkt ist noch nicht eingerichtet.")
+                }
+                if let error = installer.lastError {
+                    Label(error, systemImage: "exclamationmark.triangle")
+                        .foregroundStyle(.orange)
+                }
+            }
+        } footer: {
+            if isInstalled {
+                StatusLegend()
+            } else {
+                Text("Für den Punkt trägt Claude Ring ein kleines Skript als Hook in Claude Code ein; Details im Tab „Claude Code“.")
+                    .foregroundStyle(.secondary)
+            }
+        }
     }
 }
 
 /// The menu bar item as it currently looks, on a menu-bar-like capsule.
 private struct MenuBarPreview: View {
     let display: MenuBarDisplay
-    @Environment(\.accessibilityDifferentiateWithoutColor) private var differentiateWithoutColor
 
     var body: some View {
-        Image(nsImage: MenuBarIconRenderer.image(for: display, differentiateWithoutColor: differentiateWithoutColor))
+        Image(nsImage: MenuBarIconRenderer.image(for: display))
             .padding(.horizontal, 12)
             .frame(height: 28)
             .background(.quaternary, in: .capsule)
@@ -78,13 +116,13 @@ private struct StatusLegend: View {
                     Label {
                         Text(activity.label)
                     } icon: {
-                        Image(systemName: "circle.fill")
+                        Image(systemName: activity.distinctSymbolName)
                             .foregroundStyle(activity.color)
                             .imageScale(.small)
                     }
                 }
             }
-            Text("Der Punkt erscheint, sobald eine Claude-Code-Sitzung läuft. Einrichten im Tab „Claude Code“.")
+            Text("Der Punkt erscheint, sobald eine Claude-Code-Sitzung läuft.")
         }
         .foregroundStyle(.secondary)
     }

@@ -28,17 +28,17 @@ enum ReleaseClientError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidResponse:
-            "Ungültige Antwort von GitHub."
+            String(localized: "Ungültige Antwort von GitHub.")
         case .noRelease:
-            "Auf GitHub gibt es noch keine veröffentlichte Version."
+            String(localized: "Auf GitHub gibt es noch keine veröffentlichte Version.")
         case .rateLimited:
-            "GitHub begrenzt gerade die Abfragen. Bitte später noch einmal versuchen."
+            String(localized: "GitHub begrenzt gerade die Abfragen. Bitte später noch einmal versuchen.")
         case .httpStatus(let code):
-            "GitHub antwortete mit HTTP \(code)."
+            String(localized: "GitHub antwortete mit HTTP \(code).")
         case .unknownVersion(let tag):
-            "Die neueste Version auf GitHub („\(tag)“) hat kein bekanntes Format."
+            String(localized: "Die neueste Version auf GitHub („\(tag)“) hat kein bekanntes Format.")
         case .decoding(let error):
-            "Antwort von GitHub konnte nicht gelesen werden: \(error.localizedDescription)"
+            String(localized: "Antwort von GitHub konnte nicht gelesen werden: \(error.localizedDescription)")
         }
     }
 }

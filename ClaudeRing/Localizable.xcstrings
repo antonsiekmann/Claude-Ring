@@ -1,0 +1,2360 @@
+{
+  "sourceLanguage" : "de",
+  "strings" : {
+    "„~/.claude/settings.json“ ist kein gültiges JSON. Die App ändert die Datei deshalb nicht." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“~/.claude/settings.json” isn’t valid JSON, so the app doesn’t change it."
+          }
+        }
+      }
+    },
+    "„claude“ kopieren" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy “claude”"
+          }
+        }
+      }
+    },
+    "%@ ausblenden" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hide %@"
+          }
+        }
+      }
+    },
+    "%@ beenden" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quit %@"
+          }
+        }
+      }
+    },
+    "%@ Nächster Versuch um %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ Nächster Versuch um %2$@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ Next try at %2$@."
+          }
+        }
+      }
+    },
+    "%@ seit %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ seit %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ for %2$@"
+          }
+        }
+      }
+    },
+    "%lld %%" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%%"
+          }
+        }
+      }
+    },
+    "%lld %% genutzt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%% used"
+          }
+        }
+      }
+    },
+    "%lld %% genutzt. %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld %% genutzt. %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld%% used. %2$@"
+          }
+        }
+      }
+    },
+    "%lld %% übrig" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%% left"
+          }
+        }
+      }
+    },
+    "ab %lld %% genutzt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "at %lld%% used"
+          }
+        }
+      }
+    },
+    "ab %lld %% übrig" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "at %lld%% left"
+          }
+        }
+      }
+    },
+    "Abbrechen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        }
+      }
+    },
+    "Abschnitte im Popover" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sections in the popover"
+          }
+        }
+      }
+    },
+    "Aktualisieren" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Update"
+          }
+        }
+      }
+    },
+    "Aktualisierung" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Refresh"
+          }
+        }
+      }
+    },
+    "Aktuelle Sitzung" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current session"
+          }
+        }
+      }
+    },
+    "Aktuelle Sitzung (5 Std.)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current session (5 h)"
+          }
+        }
+      }
+    },
+    "Alle 2 Minuten" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Every 2 minutes"
+          }
+        }
+      }
+    },
+    "Alle 5 Minuten" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Every 5 minutes"
+          }
+        }
+      }
+    },
+    "Alle 10 Minuten" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Every 10 minutes"
+          }
+        }
+      }
+    },
+    "alle Einstellungen der App" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "all of the app’s settings"
+          }
+        }
+      }
+    },
+    "Alles auswählen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select All"
+          }
+        }
+      }
+    },
+    "Allgemein" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "General"
+          }
+        }
+      }
+    },
+    "Angemeldet" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signed in"
+          }
+        }
+      }
+    },
+    "Anleitung zur Installation" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Installation guide"
+          }
+        }
+      }
+    },
+    "Anmeldung" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign-in"
+          }
+        }
+      }
+    },
+    "Anthropic begrenzt die Abfragen der Nutzung streng; seltener abzurufen vermeidet Sperren. Beim Öffnen des Popovers wird zusätzlich aktualisiert, wenn die Daten älter als 2 Minuten sind. Im Ruhezustand und bei gesperrtem Bildschirm pausiert der Abruf, nach Fehlern wird er seltener." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anthropic limits usage requests strictly; fetching less often avoids being blocked. Opening the popover also refreshes when the data is older than 2 minutes. While the Mac sleeps or the screen is locked, fetching pauses; after errors it slows down."
+          }
+        }
+      }
+    },
+    "Anthropic begrenzt gerade die Abfragen der Nutzung. Angezeigt wird der letzte Stand." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anthropic is limiting usage requests right now. Showing the latest data."
+          }
+        }
+      }
+    },
+    "Anthropic drosselt die Abfragen gerade." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anthropic is throttling requests right now."
+          }
+        }
+      }
+    },
+    "Antwort konnte nicht gelesen werden: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t read the response: %@"
+          }
+        }
+      }
+    },
+    "Antwort von GitHub konnte nicht gelesen werden: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t read the response from GitHub: %@"
+          }
+        }
+      }
+    },
+    "Arbeitet" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Working"
+          }
+        }
+      }
+    },
+    "Auch für das Wochenlimit" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Also for the weekly limit"
+          }
+        }
+      }
+    },
+    "Auf GitHub gibt es noch keine veröffentlichte Version." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There is no published version on GitHub yet."
+          }
+        }
+      }
+    },
+    "Auf MacBooks mit Kamera-Aussparung verdecken zu viele Symbole die hinteren. Entferne andere Symbole aus der Menüleiste oder prüfe in den Systemeinstellungen, ob Claude Ring in der Menüleiste erlaubt ist." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On MacBooks with a camera notch, too many icons hide the ones further left. Remove other icons from the menu bar, or check in System Settings that Claude Ring is allowed in the menu bar."
+          }
+        }
+      }
+    },
+    "Ausschneiden" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cut"
+          }
+        }
+      }
+    },
+    "Automatisch nach Updates suchen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check for updates automatically"
+          }
+        }
+      }
+    },
+    "Bearbeiten" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit"
+          }
+        }
+      }
+    },
+    "Bei der Anmeldung öffnen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open at login"
+          }
+        }
+      }
+    },
+    "Caches, gespeicherte Fensterzustände und Reste abgebrochener Updates" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "caches, saved window states and leftovers of interrupted updates"
+          }
+        }
+      }
+    },
+    "Claude Code" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude Code"
+          }
+        }
+      }
+    },
+    "Claude Code arbeitet" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude Code is working"
+          }
+        }
+      }
+    },
+    "Claude Code hat seine Einstellungen gerade geändert. Bitte noch einmal versuchen." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude Code just changed its settings. Please try again."
+          }
+        }
+      }
+    },
+    "Claude Code ist frei" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude Code is idle"
+          }
+        }
+      }
+    },
+    "Claude Code nicht gefunden" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude Code not found"
+          }
+        }
+      }
+    },
+    "Claude Code wartet auf deine Antwort" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude Code is waiting for your answer"
+          }
+        }
+      }
+    },
+    "Claude Ring %@ ist verfügbar" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude Ring %@ is available"
+          }
+        }
+      }
+    },
+    "Claude Ring beenden" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quit Claude Ring"
+          }
+        }
+      }
+    },
+    "Claude Ring erkennt die Anmeldung von selbst." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude Ring notices the sign-in by itself."
+          }
+        }
+      }
+    },
+    "Claude Ring ist aktuell" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude Ring is up to date"
+          }
+        }
+      }
+    },
+    "Claude Ring konnte nicht verschoben werden (%@). Ziehe die App im Finder in „Programme“ und öffne sie dort." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude Ring couldn’t be moved (%@). Drag the app into “Applications” in the Finder and open it there."
+          }
+        }
+      }
+    },
+    "Claude Ring nutzt die Anmeldung von Claude Code. Installiere Claude Code und melde dich einmal mit „claude“ im Terminal an; Claude Ring erkennt das von selbst." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude Ring uses Claude Code’s sign-in. Install Claude Code and sign in once with “claude” in Terminal; Claude Ring notices it by itself."
+          }
+        }
+      }
+    },
+    "Claude Ring startet nach jedem Neustart von selbst." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude Ring starts by itself after every restart."
+          }
+        }
+      }
+    },
+    "Claude Ring vollständig entfernen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove Claude Ring completely"
+          }
+        }
+      }
+    },
+    "Claude Ring vollständig entfernen?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove Claude Ring completely?"
+          }
+        }
+      }
+    },
+    "Claude Ring zeigt in der Menüleiste, wie viel von deinem Claude-Limit übrig ist und ob Claude Code gerade arbeitet." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude Ring shows in the menu bar how much of your Claude limit is left and whether Claude Code is working."
+          }
+        }
+      }
+    },
+    "Claude-Code-Sitzungen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude Code sessions"
+          }
+        }
+      }
+    },
+    "Claude-Code-Status anzeigen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show Claude Code status"
+          }
+        }
+      }
+    },
+    "Claude-Nutzung" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude usage"
+          }
+        }
+      }
+    },
+    "Claude-Nutzung: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude usage: %@"
+          }
+        }
+      }
+    },
+    "Claude-Sitzung fast aufgebraucht" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude session almost used up"
+          }
+        }
+      }
+    },
+    "Claude-Sitzung zu %lld %% genutzt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude session %lld%% used"
+          }
+        }
+      }
+    },
+    "Claude-Sitzung zurückgesetzt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude session reset"
+          }
+        }
+      }
+    },
+    "Claude-Wochenlimit fast aufgebraucht" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude weekly limit almost used up"
+          }
+        }
+      }
+    },
+    "Claude-Wochenlimit zu %lld %% genutzt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude weekly limit %lld%% used"
+          }
+        }
+      }
+    },
+    "Darstellung" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appearance"
+          }
+        }
+      }
+    },
+    "Das 5-Stunden-Limit steht wieder voll zur Verfügung." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The 5-hour limit is fully available again."
+          }
+        }
+      }
+    },
+    "das Anmeldeobjekt und die Mitteilungen der App" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "the app’s login item and notifications"
+          }
+        }
+      }
+    },
+    "Das Claude-Code-Token ist abgelaufen oder ungültig. Bitte einmal „claude“ im Terminal starten, damit es erneuert wird." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Claude Code token has expired or is invalid. Run “claude” once in Terminal to renew it."
+          }
+        }
+      }
+    },
+    "Das Claude-Code-Token ist abgelaufen. Bitte einmal „claude“ im Terminal starten, damit es erneuert wird." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Claude Code token has expired. Run “claude” once in Terminal to renew it."
+          }
+        }
+      }
+    },
+    "Das Disk-Image ließ sich nicht öffnen." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The disk image couldn’t be opened."
+          }
+        }
+      }
+    },
+    "Das Symbol ist gerade nicht zu sehen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The icon isn’t visible right now"
+          }
+        }
+      }
+    },
+    "Das Update konnte nicht installiert werden. %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The update couldn’t be installed. %@"
+          }
+        }
+      }
+    },
+    "Daten veraltet" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "data out of date"
+          }
+        }
+      }
+    },
+    "Der Download ist fehlgeschlagen." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The download failed."
+          }
+        }
+      }
+    },
+    "Der Punkt erscheint, sobald eine Claude-Code-Sitzung läuft." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The dot appears as soon as a Claude Code session is running."
+          }
+        }
+      }
+    },
+    "Der Schlüsselbund hat nicht rechtzeitig geantwortet." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The keychain didn’t respond in time."
+          }
+        }
+      }
+    },
+    "Der Statuspunkt ist noch nicht eingerichtet." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The status dot isn’t set up yet."
+          }
+        }
+      }
+    },
+    "Der Statuspunkt muss aktualisiert werden." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The status dot needs an update."
+          }
+        }
+      }
+    },
+    "Die aktuelle Sitzung und das Wochenlimit für alle Modelle sind immer zu sehen." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The current session and the weekly limit for all models are always shown."
+          }
+        }
+      }
+    },
+    "Die App fragt kurz nach dem Start und dann einmal am Tag bei GitHub nach einer neuen Version. Geladen wird erst nach einem Klick auf „Installieren“. Die App prüft den Download gegen die Prüfsumme auf GitHub, ersetzt sich und startet neu; die Einstellungen bleiben erhalten." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shortly after launch and then once a day, the app asks GitHub for a new version. Nothing is downloaded until you click “Install”. The app checks the download against the checksum on GitHub, replaces itself and restarts; your settings are kept."
+          }
+        }
+      }
+    },
+    "Die App im Disk-Image ist nicht die erwartete Version von Claude Ring." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The app in the disk image isn’t the expected version of Claude Ring."
+          }
+        }
+      }
+    },
+    "Die App liest das Token über „/usr/bin/security“, ohne Passwortabfrage, und hält es nur im Arbeitsspeicher. Sie speichert, ändert oder erneuert es nie; das übernimmt Claude Code." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The app reads the token through “/usr/bin/security” without asking for a password and keeps it in memory only. It never stores, changes or renews it; Claude Code takes care of that."
+          }
+        }
+      }
+    },
+    "die App selbst (in den Papierkorb)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "the app itself (to the Trash)"
+          }
+        }
+      }
+    },
+    "die Claude-Code-Hooks aus „~/.claude/settings.json“ (alles andere darin bleibt)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "the Claude Code hooks from “~/.claude/settings.json” (everything else in it stays)"
+          }
+        }
+      }
+    },
+    "Die Farben wechseln an den Schwellen aus dem Tab „Mitteilungen“." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The colors change at the thresholds from the Notifications tab."
+          }
+        }
+      }
+    },
+    "Die gespeicherten Claude-Code-Zugangsdaten konnten nicht gelesen werden." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The stored Claude Code credentials couldn’t be read."
+          }
+        }
+      }
+    },
+    "Die heruntergeladene Datei stimmt nicht mit der Prüfsumme auf GitHub überein." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The downloaded file doesn’t match the checksum on GitHub."
+          }
+        }
+      }
+    },
+    "Die Hooks konnten nicht aus „~/.claude/settings.json“ entfernt werden, deshalb wurde nichts gelöscht. %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The hooks couldn’t be removed from “~/.claude/settings.json”, so nothing was deleted. %@"
+          }
+        }
+      }
+    },
+    "Die Kopie in „Programme“ ist unvollständig." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The copy in “Applications” is incomplete."
+          }
+        }
+      }
+    },
+    "Die neue App ließ sich nicht kopieren." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The new app couldn’t be copied."
+          }
+        }
+      }
+    },
+    "Die neue Version braucht macOS %@ oder neuer." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The new version requires macOS %@ or later."
+          }
+        }
+      }
+    },
+    "Die neueste Version auf GitHub („%@“) hat kein bekanntes Format." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The latest version on GitHub (“%@”) has an unknown format."
+          }
+        }
+      }
+    },
+    "Die Signatur der neuen App ist ungültig." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The signature of the new app is invalid."
+          }
+        }
+      }
+    },
+    "Ein Punkt in der Menüleiste zeigt, ob Claude Code arbeitet, auf eine Antwort wartet oder frei ist." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A dot in the menu bar shows whether Claude Code is working, waiting for an answer or idle."
+          }
+        }
+      }
+    },
+    "Eingerichtet" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set up"
+          }
+        }
+      }
+    },
+    "Einmal pro Version. Ein Klick auf die Mitteilung öffnet die Einstellungen mit dem Update." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Once per version. Clicking the notification opens the settings with the update."
+          }
+        }
+      }
+    },
+    "Einrichten" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set Up"
+          }
+        }
+      }
+    },
+    "Einrichtung" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Setup"
+          }
+        }
+      }
+    },
+    "Einrichtung …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Setup…"
+          }
+        }
+      }
+    },
+    "Einsetzen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paste"
+          }
+        }
+      }
+    },
+    "Einstellungen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
+          }
+        }
+      }
+    },
+    "Einstellungen …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings…"
+          }
+        }
+      }
+    },
+    "Entfernen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove"
+          }
+        }
+      }
+    },
+    "Entfernen …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove…"
+          }
+        }
+      }
+    },
+    "Entfernen und beenden" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove and Quit"
+          }
+        }
+      }
+    },
+    "Entfernt die App und alles, was sie angelegt hat, einschließlich der Hooks in Claude Code. Claude Code selbst bleibt unverändert." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Removes the app and everything it created, including the hooks in Claude Code. Claude Code itself stays unchanged."
+          }
+        }
+      }
+    },
+    "Entfernt werden %@. Claude Code und seine Anmeldung bleiben unverändert." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This removes %@. Claude Code and its sign-in stay unchanged."
+          }
+        }
+      }
+    },
+    "Fenster" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Window"
+          }
+        }
+      }
+    },
+    "Fertig" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        }
+      }
+    },
+    "Frei" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Idle"
+          }
+        }
+      }
+    },
+    "Für den Punkt in der Menüleiste trägt die App ein kleines Skript als Hook in „~/.claude/settings.json“ ein und sichert die Datei vor der ersten Änderung einmal. Andere Hooks bleiben unverändert. Das Skript merkt sich nur Ereignis, Sitzung, Projektordner und Werkzeugname, keine Eingaben oder Inhalte. Neue Claude-Code-Sitzungen melden sich sofort." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For the dot in the menu bar, the app adds a small script as a hook to “~/.claude/settings.json” and backs up the file once before its first change. Other hooks stay unchanged. The script only records the event, session, project folder and tool name, never any input or content. New Claude Code sessions report right away."
+          }
+        }
+      }
+    },
+    "Für den Punkt trägt Claude Ring ein kleines Skript als Hook in Claude Code ein; Details im Tab „Claude Code“." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For the dot, Claude Ring adds a small script as a hook to Claude Code; details in the Claude Code tab."
+          }
+        }
+      }
+    },
+    "Für den Statuspunkt trägt Claude Ring ein kleines Skript als Hook in „~/.claude/settings.json“ ein und sichert die Datei vor der ersten Änderung einmal. Andere Hooks bleiben unverändert. Alles lässt sich später in den Einstellungen ändern.\n\nDas Symbol erscheint oben rechts in der Menüleiste. Auf MacBooks mit Kamera-Aussparung können es andere Symbole verdecken." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For the status dot, Claude Ring adds a small script as a hook to “~/.claude/settings.json” and backs up the file once before its first change. Other hooks stay unchanged. You can change everything later in Settings.\n\nThe icon appears at the top right of the menu bar. On MacBooks with a camera notch, other icons can hide it."
+          }
+        }
+      }
+    },
+    "Genutzt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Used"
+          }
+        }
+      }
+    },
+    "Geprüft %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checked %@"
+          }
+        }
+      }
+    },
+    "Gerade keine Internetverbindung." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No internet connection right now."
+          }
+        }
+      }
+    },
+    "GitHub antwortete mit HTTP %lld." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub responded with HTTP %lld."
+          }
+        }
+      }
+    },
+    "GitHub begrenzt gerade die Abfragen. Bitte später noch einmal versuchen." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub is limiting requests right now. Please try again later."
+          }
+        }
+      }
+    },
+    "Herunterladen …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Download…"
+          }
+        }
+      }
+    },
+    "Hintergrund" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Background"
+          }
+        }
+      }
+    },
+    "Hook-Skript, Sitzungsdaten und Sicherung" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "the hook script, session data and the backup"
+          }
+        }
+      }
+    },
+    "Im Disk-Image fehlt „Claude Ring.app“." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“Claude Ring.app” is missing from the disk image."
+          }
+        }
+      }
+    },
+    "Im Dock ablegen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimize"
+          }
+        }
+      }
+    },
+    "In „Programme“ darf Claude Ring keine Dateien anlegen." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude Ring isn’t allowed to create files in “Applications”."
+          }
+        }
+      }
+    },
+    "In „Programme“ verschieben" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move to Applications"
+          }
+        }
+      }
+    },
+    "Installieren" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Install"
+          }
+        }
+      }
+    },
+    "Installieren und neu starten" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Install and Restart"
+          }
+        }
+      }
+    },
+    "Installierte Version" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Installed version"
+          }
+        }
+      }
+    },
+    "Jede Minute" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Every minute"
+          }
+        }
+      }
+    },
+    "Jede Schwelle meldet sich höchstens einmal pro Zeitraum. Die Reset-Meldung kommt nur, wenn vorher die Warnschwelle erreicht war." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Each threshold notifies at most once per period. The reset notification only comes if the warning threshold was reached before."
+          }
+        }
+      }
+    },
+    "Jetzt aktualisieren" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Refresh Now"
+          }
+        }
+      }
+    },
+    "Jetzt suchen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check Now"
+          }
+        }
+      }
+    },
+    "Keine Claude-Code-Anmeldung gefunden. Bitte einmal „claude“ im Terminal starten und anmelden." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Claude Code sign-in found. Run “claude” once in Terminal and sign in."
+          }
+        }
+      }
+    },
+    "Keine Nutzungsdaten" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "no usage data"
+          }
+        }
+      }
+    },
+    "Klicke hier, um das Update anzusehen und zu installieren." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Click here to view and install the update."
+          }
+        }
+      }
+    },
+    "Kopieren" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy"
+          }
+        }
+      }
+    },
+    "Kritisch" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Critical"
+          }
+        }
+      }
+    },
+    "Lade Nutzungsdaten" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "loading usage data"
+          }
+        }
+      }
+    },
+    "Lade Nutzungsdaten …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading usage data…"
+          }
+        }
+      }
+    },
+    "Letztes Ereignis" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last event"
+          }
+        }
+      }
+    },
+    "Limit" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limit"
+          }
+        }
+      }
+    },
+    "Melden, wenn die Sitzung zurückgesetzt wurde" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notify when the session has been reset"
+          }
+        }
+      }
+    },
+    "Melden, wenn eine neue Version verfügbar ist" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notify when a new version is available"
+          }
+        }
+      }
+    },
+    "Menüleiste" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menu Bar"
+          }
+        }
+      }
+    },
+    "Mitteilungen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications"
+          }
+        }
+      }
+    },
+    "Mitteilungen senden" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send notifications"
+          }
+        }
+      }
+    },
+    "Mitteilungen sind aktiv" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications are on"
+          }
+        }
+      }
+    },
+    "Mitteilungen sind für Claude Ring ausgeschaltet." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications are turned off for Claude Ring."
+          }
+        }
+      }
+    },
+    "Modell-Wochenlimits" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekly limits per model"
+          }
+        }
+      }
+    },
+    "Nach Updates suchen …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check for Updates…"
+          }
+        }
+      }
+    },
+    "Nächster Versuch um %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next try at %@."
+          }
+        }
+      }
+    },
+    "Neue Version installieren und Claude Ring neu starten" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Install the new version and restart Claude Ring"
+          }
+        }
+      }
+    },
+    "Nicht eingerichtet" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not set up"
+          }
+        }
+      }
+    },
+    "Nicht mehr zeigen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Don’t Show Again"
+          }
+        }
+      }
+    },
+    "Noch %lld %% übrig. %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Noch %1$lld %% übrig. %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld%% left. %2$@"
+          }
+        }
+      }
+    },
+    "Noch nicht angemeldet" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not signed in yet"
+          }
+        }
+      }
+    },
+    "Noch nicht geprüft" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not checked yet"
+          }
+        }
+      }
+    },
+    "Noch nicht in „Programme“" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not in Applications yet"
+          }
+        }
+      }
+    },
+    "Nur von dort startet Claude Ring bei der Anmeldung und installiert Updates selbst." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only from there does Claude Ring open at login and install updates by itself."
+          }
+        }
+      }
+    },
+    "Nur Zahlen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Numbers only"
+          }
+        }
+      }
+    },
+    "Nutzung abrufen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fetch usage"
+          }
+        }
+      }
+    },
+    "Nutzung auf claude.ai" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usage on claude.ai"
+          }
+        }
+      }
+    },
+    "Nutzung auf claude.ai öffnen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open usage on claude.ai"
+          }
+        }
+      }
+    },
+    "Öffne das Terminal, gib „claude“ ein und melde dich an. Claude Ring erkennt die Anmeldung von selbst." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Terminal, type “claude” and sign in. Claude Ring notices the sign-in by itself."
+          }
+        }
+      }
+    },
+    "Öffnen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open"
+          }
+        }
+      }
+    },
+    "Plan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan"
+          }
+        }
+      }
+    },
+    "Popover" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Popover"
+          }
+        }
+      }
+    },
+    "Quelle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Source"
+          }
+        }
+      }
+    },
+    "Reset %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resets %@"
+          }
+        }
+      }
+    },
+    "Reset gleich" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resets shortly"
+          }
+        }
+      }
+    },
+    "Reset in %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resets in %@"
+          }
+        }
+      }
+    },
+    "Ring und Balken einfärben" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Color ring and bars"
+          }
+        }
+      }
+    },
+    "Ring und Balken färben sich an diesen Schwellen orange und rot; mit eingeschalteten Mitteilungen kommt dann jeweils eine Meldung." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The ring and bars turn orange and red at these thresholds; with notifications on, each also sends a notification."
+          }
+        }
+      }
+    },
+    "Ring und Zahl" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ring and number"
+          }
+        }
+      }
+    },
+    "Schließen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close"
+          }
+        }
+      }
+    },
+    "Schlüsselbund-Fehler (%d)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keychain error (%d)."
+          }
+        }
+      }
+    },
+    "Schwellen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thresholds"
+          }
+        }
+      }
+    },
+    "Sehen, wann Claude Code auf dich wartet" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "See when Claude Code is waiting for you"
+          }
+        }
+      }
+    },
+    "Seite der neuen Version öffnen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the new version’s page"
+          }
+        }
+      }
+    },
+    "Selbst ersetzen kann sich nur eine App im Ordner „Programme“, in dem du schreiben darfst. „Herunterladen …“ öffnet die Seite der neuen Version." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only an app in an “Applications” folder you can write to can replace itself. “Download…” opens the new version’s page."
+          }
+        }
+      }
+    },
+    "Server antwortete mit HTTP %lld." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The server responded with HTTP %lld."
+          }
+        }
+      }
+    },
+    "Sicherung im Finder zeigen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show Backup in Finder"
+          }
+        }
+      }
+    },
+    "Sitzung %lld Prozent genutzt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "session %lld percent used"
+          }
+        }
+      }
+    },
+    "Sitzung %lld Prozent übrig" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "session %lld percent left"
+          }
+        }
+      }
+    },
+    "So sieht eine Warnung von Claude Ring aus." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This is what a warning from Claude Ring looks like."
+          }
+        }
+      }
+    },
+    "Später" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Later"
+          }
+        }
+      }
+    },
+    "Stand %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As of %@"
+          }
+        }
+      }
+    },
+    "Start" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Startup"
+          }
+        }
+      }
+    },
+    "Status" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Status"
+          }
+        }
+      }
+    },
+    "Statusanzeige" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Status dot"
+          }
+        }
+      }
+    },
+    "Statuspunkt für Claude Code" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Status dot for Claude Code"
+          }
+        }
+      }
+    },
+    "Stil" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Style"
+          }
+        }
+      }
+    },
+    "Suche nach Updates …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checking for updates…"
+          }
+        }
+      }
+    },
+    "Systemeinstellungen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "System Settings"
+          }
+        }
+      }
+    },
+    "Systemeinstellungen öffnen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open System Settings"
+          }
+        }
+      }
+    },
+    "Terminal öffnen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Terminal"
+          }
+        }
+      }
+    },
+    "Test-Mitteilung senden" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send Test Notification"
+          }
+        }
+      }
+    },
+    "Token gültig bis" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Token valid until"
+          }
+        }
+      }
+    },
+    "Über %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About %@"
+          }
+        }
+      }
+    },
+    "übrig" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "left"
+          }
+        }
+      }
+    },
+    "Übrig" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Left"
+          }
+        }
+      }
+    },
+    "Ungültige Antwort vom Server." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid response from the server."
+          }
+        }
+      }
+    },
+    "Ungültige Antwort von GitHub." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid response from GitHub."
+          }
+        }
+      }
+    },
+    "Updates" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Updates"
+          }
+        }
+      }
+    },
+    "Veraltet" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outdated"
+          }
+        }
+      }
+    },
+    "Verfügbar, sobald Claude Ring in „Programme“ liegt." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Available once Claude Ring is in Applications."
+          }
+        }
+      }
+    },
+    "Verfügbar, sobald die App im Ordner „Programme“ liegt." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Available once the app is in the Applications folder."
+          }
+        }
+      }
+    },
+    "Version %@ ist verfügbar" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version %@ is available"
+          }
+        }
+      }
+    },
+    "Version %@ wird installiert …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Installing version %@…"
+          }
+        }
+      }
+    },
+    "Vorschau: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preview: %@"
+          }
+        }
+      }
+    },
+    "Warnung" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warning"
+          }
+        }
+      }
+    },
+    "Wartet auf Antwort" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting for answer"
+          }
+        }
+      }
+    },
+    "Wartet auf deine Freigabe in den Systemeinstellungen." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting for your approval in System Settings."
+          }
+        }
+      }
+    },
+    "Was ist neu?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What’s New?"
+          }
+        }
+      }
+    },
+    "Wert" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Value"
+          }
+        }
+      }
+    },
+    "Widerrufen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Undo"
+          }
+        }
+      }
+    },
+    "Wiederholen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Redo"
+          }
+        }
+      }
+    },
+    "Willkommen bei Claude Ring" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welcome to Claude Ring"
+          }
+        }
+      }
+    },
+    "Willkommensfenster öffnen …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Welcome Window…"
+          }
+        }
+      }
+    },
+    "Wird geprüft …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checking…"
+          }
+        }
+      }
+    },
+    "Wird installiert, die App startet gleich neu …" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Installing; the app will restart in a moment…"
+          }
+        }
+      }
+    },
+    "Woche" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Week"
+          }
+        }
+      }
+    },
+    "Woche (%@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Week (%@)"
+          }
+        }
+      }
+    },
+    "Woche (alle Modelle)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Week (all models)"
+          }
+        }
+      }
+    },
+    "Woche (ein Modell)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Week (one model)"
+          }
+        }
+      }
+    },
+    "Woche %lld Prozent genutzt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "week %lld percent used"
+          }
+        }
+      }
+    },
+    "Woche %lld Prozent übrig" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "week %lld percent left"
+          }
+        }
+      }
+    },
+    "Wochennutzung nach Bereich" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekly usage by area"
+          }
+        }
+      }
+    },
+    "Zeigt in der Menüleiste, ob Claude Code arbeitet, auf dich wartet oder frei ist." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shows in the menu bar whether Claude Code is working, waiting for you or idle."
+          }
+        }
+      }
+    },
+    "Zugriff auf den Schlüsselbund wurde verweigert." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Access to the keychain was denied."
+          }
+        }
+      }
+    },
+    "Zwei Balken" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Two bars"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.3"
+}

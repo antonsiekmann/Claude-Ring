@@ -42,7 +42,7 @@ final class AppUninstaller {
     var summary: String {
         var items = [
             String(localized: "die Claude-Code-Hooks aus „~/.claude/settings.json“ (alles andere darin bleibt)"),
-            String(localized: "Hook-Skript, Sitzungsdaten und Sicherungen"),
+            String(localized: "Hook-Skript, Sitzungsdaten und Sicherung"),
             String(localized: "alle Einstellungen der App"),
             String(localized: "das Anmeldeobjekt und die Mitteilungen der App"),
             String(localized: "Caches, gespeicherte Fensterzustände und Reste abgebrochener Updates"),

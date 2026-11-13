@@ -20,10 +20,7 @@ enum ThresholdEvaluator {
         case reset
     }
 
-    struct Thresholds: Equatable, Sendable {
-        var warning: Int
-        var critical: Int
-    }
+    typealias Thresholds = UsageThresholds
 
     static func evaluate(
         window: UsageWindowInfo,

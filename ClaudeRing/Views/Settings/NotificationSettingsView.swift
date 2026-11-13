@@ -22,20 +22,26 @@ struct NotificationSettingsView: View {
             }
 
             Section {
-                Picker("Warnung ab", selection: $settings.warningThreshold) {
+                Picker("Warnung", selection: $settings.warningThreshold) {
                     ForEach(Self.warningOptions, id: \.self) { percent in
-                        Text("\(percent) % genutzt").tag(percent)
+                        ThresholdLabel(usedPercent: percent, value: settings.menuBarValue).tag(percent)
                     }
                 }
-                Picker("Kritisch ab", selection: $settings.criticalThreshold) {
+                Picker("Kritisch", selection: $settings.criticalThreshold) {
                     ForEach(Self.criticalOptions.filter { $0 > settings.warningThreshold }, id: \.self) { percent in
-                        Text("\(percent) % genutzt").tag(percent)
+                        ThresholdLabel(usedPercent: percent, value: settings.menuBarValue).tag(percent)
                     }
                 }
-                Toggle("Auch für das Wochenlimit", isOn: $settings.notifiesForWeekly)
-                Toggle("Melden, wenn die Sitzung zurückgesetzt wurde", isOn: $settings.notifiesOnSessionReset)
             } header: {
                 Text("Schwellen")
+            } footer: {
+                Text("Ring und Balken färben sich an diesen Schwellen orange und rot; mit eingeschalteten Mitteilungen kommt dann jeweils eine Meldung.")
+                    .foregroundStyle(.secondary)
+            }
+
+            Section {
+                Toggle("Auch für das Wochenlimit", isOn: $settings.notifiesForWeekly)
+                Toggle("Melden, wenn die Sitzung zurückgesetzt wurde", isOn: $settings.notifiesOnSessionReset)
             } footer: {
                 Text("Jede Schwelle meldet sich höchstens einmal pro Zeitraum. Die Reset-Meldung kommt nur, wenn vorher die Warnschwelle erreicht war.")
                     .foregroundStyle(.secondary)
@@ -60,6 +66,19 @@ struct NotificationSettingsView: View {
         .formStyle(.grouped)
         .task { await notifier.refreshAuthorization() }
         .notificationPermissionRequest(settings: settings, notifier: notifier)
+    }
+}
+
+/// A threshold in the unit the menu bar shows: "20 % übrig" or "80 % genutzt".
+private struct ThresholdLabel: View {
+    let usedPercent: Int
+    let value: MenuBarValue
+
+    var body: some View {
+        switch value {
+        case .remaining: Text("ab \(100 - usedPercent) % übrig")
+        case .used: Text("ab \(usedPercent) % genutzt")
+        }
     }
 }
 

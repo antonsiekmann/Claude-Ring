@@ -17,9 +17,10 @@ extension UsageLevel {
 }
 
 extension ClaudeActivity {
+    /// Red stays reserved for a nearly used-up limit.
     var nsColor: NSColor {
         switch self {
-        case .working: .systemRed
+        case .working: .systemPurple
         case .waiting: .systemCyan
         case .idle: .systemGreen
         }
@@ -27,7 +28,8 @@ extension ClaudeActivity {
 
     var color: Color { Color(nsColor: nsColor) }
 
-    /// Shapes that tell the states apart without color.
+    /// Each state also has its own shape, so it reads without color too:
+    /// filled while working, half filled while waiting, hollow when idle.
     var distinctSymbolName: String {
         switch self {
         case .working: "circle.fill"

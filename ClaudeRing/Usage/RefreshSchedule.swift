@@ -16,6 +16,11 @@ enum RefreshSchedule {
     static let maximumRetryAfter: Duration = .seconds(60 * 60)
     /// Data younger than this is fresh enough when the popover opens.
     static let stalenessThreshold: Duration = .seconds(2 * 60)
+    /// Next try after a request failed for lack of a connection. Not counted
+    /// as a failure: the request itself already waits for the network.
+    static let offlineRetry: Duration = .seconds(60)
+    /// Data older than this, or three intervals, gets marked as outdated.
+    static let outdatedAfter: Duration = .seconds(15 * 60)
 
     /// - Parameters:
     ///   - interval: The interval chosen in the settings.
@@ -51,5 +56,19 @@ enum RefreshSchedule {
     static func isStale(lastUpdated: Date?, now: Date) -> Bool {
         guard let lastUpdated else { return true }
         return now.timeIntervalSince(lastUpdated) >= stalenessThreshold.timeInterval
+    }
+
+    /// When the next automatic request may go out: not before a wait asked
+    /// for by failures or the server, and not before the interval since the
+    /// last data is over. Waking up or changing the interval doesn't skip it.
+    static func nextDue(lastUpdated: Date?, interval: Duration, backoffUntil: Date?) -> Date {
+        let byInterval = lastUpdated?.addingTimeInterval(interval.timeInterval) ?? .distantPast
+        return max(byInterval, backoffUntil ?? .distantPast)
+    }
+
+    /// Too old to show without a hint, even while nothing can be done about it.
+    static func isOutdated(lastUpdated: Date?, interval: Duration, now: Date) -> Bool {
+        guard let lastUpdated else { return true }
+        return now.timeIntervalSince(lastUpdated) > max(outdatedAfter, interval * 3).timeInterval
     }
 }

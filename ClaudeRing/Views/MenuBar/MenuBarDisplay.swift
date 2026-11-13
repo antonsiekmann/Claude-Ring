@@ -38,6 +38,7 @@ struct MenuBarDisplay: Equatable, Sendable {
         var value: MenuBarValue
         var colorsRing: Bool
         var showsStatusDot: Bool
+        var thresholds: UsageThresholds = .standard
     }
 
     static func make(
@@ -59,7 +60,7 @@ struct MenuBarDisplay: Equatable, Sendable {
         func gauge(_ info: UsageWindowInfo?) -> Gauge {
             guard let info else { return Gauge(fraction: 0, level: nil) }
             let shown = showsUsed ? info.usedPercent : info.remainingPercent
-            return Gauge(fraction: shown / 100, level: info.level)
+            return Gauge(fraction: shown / 100, level: info.level(preferences.thresholds))
         }
 
         func number(_ info: UsageWindowInfo) -> Int {

@@ -59,14 +59,38 @@ struct UsageBreakdown: Decodable {
 
 /// A usage window prepared for display.
 struct UsageWindowInfo: Identifiable, Equatable, Codable {
+    /// `session`, `weekly` or `weekly_scoped_<model>`.
     let id: String
-    let title: String
+    /// For a limit of a single model: the model's name from the API.
+    let modelName: String?
     /// Percent already used, clamped to 0...100.
     let usedPercent: Double
     let resetsAt: Date?
 
+    init(id: String, modelName: String? = nil, usedPercent: Double, resetsAt: Date?) {
+        self.id = id
+        self.modelName = modelName
+        self.usedPercent = usedPercent
+        self.resetsAt = resetsAt
+    }
+
     var remainingPercent: Double {
         max(0, min(100, 100 - usedPercent))
+    }
+
+    /// Made when shown rather than stored, so it follows the app's language,
+    /// also for data restored from the cache.
+    var title: String {
+        switch id {
+        case "session": String(localized: "Aktuelle Sitzung (5 Std.)")
+        case "weekly": String(localized: "Woche (alle Modelle)")
+        default:
+            if let modelName {
+                String(localized: "Woche (\(modelName))")
+            } else {
+                String(localized: "Woche (ein Modell)")
+            }
+        }
     }
 }
 
@@ -88,6 +112,20 @@ struct UsageSnapshot: Equatable, Codable {
         session ?? weekly
     }
 
+    init(
+        session: UsageWindowInfo?,
+        weekly: UsageWindowInfo?,
+        scopedWeekly: [UsageWindowInfo],
+        breakdown: [UsageBreakdown.Row],
+        planName: String?
+    ) {
+        self.session = session
+        self.weekly = weekly
+        self.scopedWeekly = scopedWeekly
+        self.breakdown = breakdown
+        self.planName = planName
+    }
+
     init(response: UsageResponse, credentials: ClaudeCredentials.OAuth) {
         let limits = response.limits ?? []
 
@@ -95,14 +133,12 @@ struct UsageSnapshot: Equatable, Codable {
         if let limit = limits.first(where: { $0.kind == "session" }) {
             session = UsageWindowInfo(
                 id: "session",
-                title: "Aktuelle Sitzung (5 Std.)",
                 usedPercent: Self.clamp(limit.percent),
                 resetsAt: limit.resetsAt
             )
         } else if let window = response.fiveHour {
             session = UsageWindowInfo(
                 id: "session",
-                title: "Aktuelle Sitzung (5 Std.)",
                 usedPercent: Self.clamp(window.utilization),
                 resetsAt: window.resetsAt
             )
@@ -113,14 +149,12 @@ struct UsageSnapshot: Equatable, Codable {
         if let limit = limits.first(where: { $0.kind == "weekly_all" }) {
             weekly = UsageWindowInfo(
                 id: "weekly",
-                title: "Woche (alle Modelle)",
                 usedPercent: Self.clamp(limit.percent),
                 resetsAt: limit.resetsAt
             )
         } else if let window = response.sevenDay {
             weekly = UsageWindowInfo(
                 id: "weekly",
-                title: "Woche (alle Modelle)",
                 usedPercent: Self.clamp(window.utilization),
                 resetsAt: window.resetsAt
             )
@@ -132,10 +166,10 @@ struct UsageSnapshot: Equatable, Codable {
             .filter { $0.kind == "weekly_scoped" }
             .enumerated()
             .map { index, limit in
-                let model = limit.scope?.model?.displayName ?? "Modell \(index + 1)"
+                let model = limit.scope?.model?.displayName ?? limit.scope?.model?.id
                 return UsageWindowInfo(
-                    id: "weekly_scoped_\(limit.scope?.model?.id ?? model)",
-                    title: "Woche (\(model))",
+                    id: "weekly_scoped_\(limit.scope?.model?.id ?? model ?? String(index + 1))",
+                    modelName: model,
                     usedPercent: Self.clamp(limit.percent),
                     resetsAt: limit.resetsAt
                 )
@@ -163,7 +197,52 @@ struct UsageSnapshot: Equatable, Codable {
     }
 }
 
+// MARK: - Reset
+
+extension UsageWindowInfo {
+    /// After its reset time a window starts over: nothing used, and the next
+    /// reset is unknown until the next request.
+    func resettingIfExpired(at now: Date) -> UsageWindowInfo {
+        guard let resetsAt, resetsAt <= now else { return self }
+        return UsageWindowInfo(id: id, modelName: modelName, usedPercent: 0, resetsAt: nil)
+    }
+}
+
+extension UsageSnapshot {
+    /// Shows windows whose reset time has passed as reset, so the menu bar
+    /// doesn't keep a used-up session until the next successful request.
+    func resettingExpiredWindows(at now: Date) -> UsageSnapshot {
+        let weeklyExpired = weekly?.resetsAt.map { $0 <= now } ?? false
+        return UsageSnapshot(
+            session: session?.resettingIfExpired(at: now),
+            weekly: weekly?.resettingIfExpired(at: now),
+            scopedWeekly: scopedWeekly.map { $0.resettingIfExpired(at: now) },
+            // The breakdown splits the weekly usage and goes with it.
+            breakdown: weeklyExpired ? [] : breakdown,
+            planName: planName
+        )
+    }
+
+    /// The earliest reset still ahead.
+    func nextReset(after now: Date) -> Date? {
+        ([session, weekly].compactMap { $0 } + scopedWeekly)
+            .compactMap(\.resetsAt)
+            .filter { $0 > now }
+            .min()
+    }
+}
+
 // MARK: - Levels
+
+/// Percent used at which a window is close to its limit (warning) or nearly
+/// used up (critical). The same values color the ring and bars and trigger
+/// the notifications, so what people see and what they hear agree.
+struct UsageThresholds: Equatable, Sendable {
+    var warning: Int
+    var critical: Int
+
+    static let standard = UsageThresholds(warning: 80, critical: 95)
+}
 
 /// How close a usage window is to its limit. Drives the ring and bar colors.
 enum UsageLevel: Sendable, Equatable {
@@ -171,15 +250,21 @@ enum UsageLevel: Sendable, Equatable {
     case warning
     case critical
 
-    init(remainingPercent: Double) {
-        switch remainingPercent {
-        case ..<10: self = .critical
-        case ..<30: self = .warning
-        default: self = .normal
+    /// Rounded like the notifications, so both switch at the same value.
+    init(usedPercent: Double, thresholds: UsageThresholds) {
+        let used = Int(usedPercent.rounded())
+        if used >= thresholds.critical {
+            self = .critical
+        } else if used >= thresholds.warning {
+            self = .warning
+        } else {
+            self = .normal
         }
     }
 }
 
 extension UsageWindowInfo {
-    var level: UsageLevel { UsageLevel(remainingPercent: remainingPercent) }
+    func level(_ thresholds: UsageThresholds) -> UsageLevel {
+        UsageLevel(usedPercent: usedPercent, thresholds: thresholds)
+    }
 }

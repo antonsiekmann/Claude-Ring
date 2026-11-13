@@ -15,21 +15,21 @@ enum UpdateInstallError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .downloadFailed:
-            "Der Download ist fehlgeschlagen."
+            String(localized: "Der Download ist fehlgeschlagen.")
         case .checksumMismatch:
-            "Die heruntergeladene Datei stimmt nicht mit der Prüfsumme auf GitHub überein."
+            String(localized: "Die heruntergeladene Datei stimmt nicht mit der Prüfsumme auf GitHub überein.")
         case .mountFailed:
-            "Das Disk-Image ließ sich nicht öffnen."
+            String(localized: "Das Disk-Image ließ sich nicht öffnen.")
         case .appMissing:
-            "Im Disk-Image fehlt „Claude Ring.app“."
+            String(localized: "Im Disk-Image fehlt „Claude Ring.app“.")
         case .unexpectedApp:
-            "Die App im Disk-Image ist nicht die erwartete Version von Claude Ring."
+            String(localized: "Die App im Disk-Image ist nicht die erwartete Version von Claude Ring.")
         case .requiresNewerSystem(let version):
-            "Die neue Version braucht macOS \(version) oder neuer."
+            String(localized: "Die neue Version braucht macOS \(version) oder neuer.")
         case .invalidSignature:
-            "Die Signatur der neuen App ist ungültig."
+            String(localized: "Die Signatur der neuen App ist ungültig.")
         case .copyFailed:
-            "Die neue App ließ sich nicht kopieren."
+            String(localized: "Die neue App ließ sich nicht kopieren.")
         }
     }
 }

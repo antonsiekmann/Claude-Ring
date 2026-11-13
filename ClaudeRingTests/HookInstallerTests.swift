@@ -175,12 +175,13 @@ private extension OrderedJSON {
 
 @MainActor
 struct HookInstallerTests {
+    private let folder = TemporaryFolder("hook-installer")
     private let home: URL
     private let paths: HookInstaller.Paths
     private let fileManager = FileManager.default
 
     init() throws {
-        home = fileManager.temporaryDirectory.appending(path: "hook-installer-\(UUID())", directoryHint: .isDirectory)
+        home = folder.url
         paths = HookInstaller.Paths(home: home)
         try fileManager.createDirectory(at: paths.claudeSettings.deletingLastPathComponent(), withIntermediateDirectories: true)
     }
@@ -241,6 +242,8 @@ struct HookInstallerTests {
 
         #expect(installer.status == .installed)
         #expect(try permissions(paths.claudeSettings) == 0o600)
+        #expect(installer.lastBackup == nil)
+        #expect(!fileManager.fileExists(atPath: paths.backup.path))
     }
 
     @Test func `Edits the target of a symlinked settings file`() throws {
@@ -256,17 +259,64 @@ struct HookInstallerTests {
         #expect(HookSettingsMerger.isInstalled(in: try OrderedJSON(parsing: Data(contentsOf: target))))
     }
 
-    @Test func `Keeps only the newest five backups`() throws {
+    @Test func `Keeps exactly one backup however often it toggles`() throws {
         try writeSettings()
         let installer = HookInstaller(paths: paths)
         for _ in 0..<4 {
             installer.install()
             installer.uninstall()
         }
+        installer.install()
 
-        let backups = try fileManager.contentsOfDirectory(atPath: paths.backups.path)
-        #expect(backups.count == 5)
         #expect(installer.lastError == nil)
+        #expect(try fileManager.contentsOfDirectory(atPath: paths.backups.path) == ["settings-original.json"])
+        #expect(try Data(contentsOf: paths.backup) == Data(realisticSettings.utf8))
+        #expect(installer.lastBackup == paths.backup)
+    }
+
+    @Test func `Never replaces the one backup`() throws {
+        try writeSettings()
+        let installer = HookInstaller(paths: paths)
+        installer.install()
+        installer.uninstall()
+        try writeSettings(realisticSettings.replacingOccurrences(of: #""cleanupPeriodDays": 30"#, with: #""cleanupPeriodDays": 60"#))
+
+        installer.install()
+
+        #expect(installer.status == .installed)
+        #expect(try fileManager.contentsOfDirectory(atPath: paths.backups.path) == ["settings-original.json"])
+        #expect(try Data(contentsOf: paths.backup) == Data(realisticSettings.utf8))
+    }
+
+    @Test func `Takes over the oldest backup of earlier versions`() throws {
+        try writeSettings()
+        try fileManager.createDirectory(at: paths.backups, withIntermediateDirectories: true)
+        let legacy = [
+            ("settings-20261110T100000-BBBBBB.json", "newest", Date(timeIntervalSince1970: 3_000)),
+            ("settings-20261028T192849-E5A720.json", "oldest", Date(timeIntervalSince1970: 1_000)),
+            ("settings-20261101T100000-AAAAAA.json", "middle", Date(timeIntervalSince1970: 2_000)),
+        ]
+        for (name, content, created) in legacy {
+            let url = paths.backups.appending(path: name)
+            try Data(content.utf8).write(to: url)
+            try fileManager.setAttributes([.creationDate: created], ofItemAtPath: url.path)
+        }
+        let settingsBefore = try Data(contentsOf: paths.claudeSettings)
+        let installer = HookInstaller(paths: paths)
+
+        installer.consolidateBackups()
+
+        #expect(try fileManager.contentsOfDirectory(atPath: paths.backups.path) == ["settings-original.json"])
+        #expect(try String(contentsOf: paths.backup, encoding: .utf8) == "oldest")
+        #expect(installer.lastBackup == paths.backup)
+        #expect(try Data(contentsOf: paths.claudeSettings) == settingsBefore)
+    }
+
+    @Test func `Finds the backup again after a restart`() throws {
+        try writeSettings()
+        HookInstaller(paths: paths).install()
+
+        #expect(HookInstaller(paths: paths).lastBackup == paths.backup)
     }
 
     @Test func `Rewrites an outdated script without touching the settings`() throws {

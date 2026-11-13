@@ -132,6 +132,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				de,
+				en,
 				Base,
 			);
 			mainGroup = 000000000000000000000001;
@@ -318,9 +319,9 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Claude Ring";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2026 Anton Siekmann. GPL-3.0. Inoffiziell, nicht mit Anthropic verbunden.";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2026 Anton Siekmann. GPL-3.0. Inoffiziell, nicht mit Anthropic verbunden.";
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = eu.siekmann.ClaudeRing;
@@ -346,9 +347,9 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Claude Ring";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2026 Anton Siekmann. GPL-3.0. Inoffiziell, nicht mit Anthropic verbunden.";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2026 Anton Siekmann. GPL-3.0. Inoffiziell, nicht mit Anthropic verbunden.";
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = eu.siekmann.ClaudeRing;

@@ -7,7 +7,7 @@ struct ThresholdEvaluatorTests {
     private let reset = Date(timeIntervalSince1970: 1_760_000_000)
 
     private func window(used: Double, resetsAt: Date?) -> UsageWindowInfo {
-        UsageWindowInfo(id: "session", title: "Sitzung", usedPercent: used, resetsAt: resetsAt)
+        UsageWindowInfo(id: "session", usedPercent: used, resetsAt: resetsAt)
     }
 
     private func run(_ steps: [(used: Double, resetsAt: Date?)], notifiesOnReset: Bool = false) -> [[ThresholdEvaluator.Event]] {

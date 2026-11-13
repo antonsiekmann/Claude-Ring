@@ -128,6 +128,22 @@ final class AppSettings {
         didSet { defaults.set(notifiesAboutUpdates, forKey: Key.notifiesAboutUpdates) }
     }
 
+    /// The thresholds for colors and notifications alike.
+    var thresholds: UsageThresholds {
+        UsageThresholds(warning: warningThreshold, critical: criticalThreshold)
+    }
+
+    /// The hint in the popover to set up the status dot was put away.
+    var dismissedStatusDotTip: Bool {
+        didSet { defaults.set(dismissedStatusDotTip, forKey: Key.dismissedStatusDotTip) }
+    }
+
+    // MARK: Welcome
+    /// The version of the welcome window last finished; nil before the first.
+    var completedWelcomeVersion: Int? {
+        didSet { defaults.set(completedWelcomeVersion, forKey: Key.completedWelcomeVersion) }
+    }
+
     @ObservationIgnored private let defaults: UserDefaults
 
     init(defaults: UserDefaults = .standard) {
@@ -148,6 +164,11 @@ final class AppSettings {
         notifiesForWeekly = defaults.bool(forKey: Key.notifiesForWeekly, default: true)
         notifiesOnSessionReset = defaults.bool(forKey: Key.notifiesOnSessionReset, default: false)
         notifiesAboutUpdates = defaults.bool(forKey: Key.notifiesAboutUpdates, default: true)
+        dismissedStatusDotTip = defaults.bool(forKey: Key.dismissedStatusDotTip, default: false)
+        // integer(forKey:) also reads "-completedWelcomeVersion 0" from the
+        // command line, which arrives as text, to show the window for a test.
+        completedWelcomeVersion = defaults.object(forKey: Key.completedWelcomeVersion) == nil
+            ? nil : defaults.integer(forKey: Key.completedWelcomeVersion)
     }
 
     private enum Key {
@@ -167,6 +188,8 @@ final class AppSettings {
         static let notifiesForWeekly = "notifiesForWeekly"
         static let notifiesOnSessionReset = "notifiesOnSessionReset"
         static let notifiesAboutUpdates = "notifiesAboutUpdates"
+        static let completedWelcomeVersion = "completedWelcomeVersion"
+        static let dismissedStatusDotTip = "dismissedStatusDotTip"
     }
 }
 

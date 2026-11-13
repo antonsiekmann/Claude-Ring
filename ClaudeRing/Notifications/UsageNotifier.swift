@@ -14,14 +14,24 @@ final class UsageNotifier: NSObject, UNUserNotificationCenterDelegate {
 
     @ObservationIgnored private let settings: AppSettings
     @ObservationIgnored private let defaults: UserDefaults
+    @ObservationIgnored private let authorizationStatus: @Sendable () async -> UNAuthorizationStatus
+    @ObservationIgnored private var isRecheckingAuthorization = false
+    @ObservationIgnored private var activationObserver: NSObjectProtocol?
     @ObservationIgnored private var center: UNUserNotificationCenter { .current() }
     private static let stateKey = "thresholdStates"
     private static let announcedVersionKey = "announcedUpdateVersion"
     nonisolated private static let updateNotificationID = "update"
 
-    init(settings: AppSettings, defaults: UserDefaults = .standard) {
+    init(
+        settings: AppSettings,
+        defaults: UserDefaults = .standard,
+        authorizationStatus: @escaping @Sendable () async -> UNAuthorizationStatus = {
+            await UNUserNotificationCenter.current().notificationSettings().authorizationStatus
+        }
+    ) {
         self.settings = settings
         self.defaults = defaults
+        self.authorizationStatus = authorizationStatus
         super.init()
     }
 
@@ -29,10 +39,35 @@ final class UsageNotifier: NSObject, UNUserNotificationCenterDelegate {
     func activate() {
         center.delegate = self
         Task { await refreshAuthorization() }
+        // Permission given in System Settings counts as soon as people come back.
+        activationObserver = NotificationCenter.default.addObserver(
+            forName: NSApplication.didBecomeActiveNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated {
+                guard let self else { return }
+                Task { await self.refreshAuthorization() }
+            }
+        }
     }
 
     func refreshAuthorization() async {
-        authorization = await center.notificationSettings().authorizationStatus
+        authorization = await authorizationStatus()
+    }
+
+    private var isAuthorized: Bool {
+        authorization == .authorized || authorization == .provisional
+    }
+
+    /// The stored answer may be outdated, because permission can be given in
+    /// System Settings at any time; asks again and continues if it is there now.
+    private func recheckAuthorization(then action: @escaping () -> Void) {
+        guard !isRecheckingAuthorization else { return }
+        isRecheckingAuthorization = true
+        Task {
+            await refreshAuthorization()
+            isRecheckingAuthorization = false
+            if isAuthorized { action() }
+        }
     }
 
     /// Asks for permission the first time; afterwards macOS remembers the answer.
@@ -62,10 +97,14 @@ final class UsageNotifier: NSObject, UNUserNotificationCenterDelegate {
 
     /// Call with every new snapshot.
     func evaluate(_ snapshot: UsageSnapshot) {
-        guard settings.notificationsEnabled, authorization == .authorized || authorization == .provisional else { return }
+        guard settings.notificationsEnabled else { return }
+        guard isAuthorized else {
+            recheckAuthorization { [weak self] in self?.evaluate(snapshot) }
+            return
+        }
 
         var states = loadStates()
-        let thresholds = ThresholdEvaluator.Thresholds(warning: settings.warningThreshold, critical: settings.criticalThreshold)
+        let thresholds = settings.thresholds
         var windows: [(UsageWindowInfo, isSession: Bool)] = []
         if let session = snapshot.session { windows.append((session, true)) }
         if settings.notifiesForWeekly, let weekly = snapshot.weekly { windows.append((weekly, false)) }
@@ -98,9 +137,11 @@ final class UsageNotifier: NSObject, UNUserNotificationCenterDelegate {
     /// Announces a new version once. A version that arrives while
     /// notifications are off is announced when they get switched on.
     func announceUpdate(_ version: AppVersion) {
-        guard settings.notificationsEnabled, settings.notifiesAboutUpdates,
-              authorization == .authorized || authorization == .provisional
-        else { return }
+        guard settings.notificationsEnabled, settings.notifiesAboutUpdates else { return }
+        guard isAuthorized else {
+            recheckAuthorization { [weak self] in self?.announceUpdate(version) }
+            return
+        }
         if let announced = defaults.string(forKey: Self.announcedVersionKey).flatMap(AppVersion.init), announced >= version {
             return
         }

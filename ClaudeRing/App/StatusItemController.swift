@@ -12,6 +12,7 @@ final class StatusItemController: NSObject, NSPopoverDelegate {
     private let sessions: ClaudeSessionStore
     private let openSettings: () -> Void
     private let checkForUpdates: () -> Void
+    private let openWelcome: () -> Void
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     private let popover = NSPopover()
     private var displayTask: Task<Void, Never>?
@@ -33,13 +34,16 @@ final class StatusItemController: NSObject, NSPopoverDelegate {
         sessions: ClaudeSessionStore,
         updater: AppUpdater,
         openSettings: @escaping () -> Void,
-        checkForUpdates: @escaping () -> Void
+        checkForUpdates: @escaping () -> Void,
+        openWelcome: @escaping () -> Void = {},
+        installer: HookInstaller? = nil
     ) {
         self.monitor = monitor
         self.settings = settings
         self.sessions = sessions
         self.openSettings = openSettings
         self.checkForUpdates = checkForUpdates
+        self.openWelcome = openWelcome
         super.init()
 
         statusItem.autosaveName = "ClaudeRing"
@@ -76,7 +80,8 @@ final class StatusItemController: NSObject, NSPopoverDelegate {
             settings: settings,
             sessions: sessions,
             updater: updater,
-            openSettings: { [weak self] in self?.openSettingsFromPopover() }
+            openSettings: { [weak self] in self?.openSettingsFromPopover() },
+            installer: installer
         ))
         hostingController.sizingOptions = .preferredContentSize
         popover.contentViewController = hostingController
@@ -109,13 +114,14 @@ final class StatusItemController: NSObject, NSPopoverDelegate {
             let displays = Observations {
                 MenuBarDisplay.make(
                     snapshot: monitor.snapshot,
-                    hasError: monitor.errorMessage != nil,
+                    hasError: monitor.needsAttention,
                     preferences: MenuBarDisplay.Preferences(
                         style: settings.menuBarStyle,
                         limit: settings.menuBarLimit,
                         value: settings.menuBarValue,
                         colorsRing: settings.colorsRing,
-                        showsStatusDot: settings.showsStatusDot
+                        showsStatusDot: settings.showsStatusDot,
+                        thresholds: settings.thresholds
                     ),
                     activity: sessions.aggregate
                 )
@@ -135,11 +141,7 @@ final class StatusItemController: NSObject, NSPopoverDelegate {
     private func redraw() {
         guard let display = renderedDisplay, let button = statusItem.button else { return }
         let pulses = Self.shouldPulse(display)
-        button.image = MenuBarIconRenderer.image(
-            for: display,
-            differentiateWithoutColor: NSWorkspace.shared.accessibilityDisplayShouldDifferentiateWithoutColor,
-            drawsDot: !pulses
-        )
+        button.image = MenuBarIconRenderer.image(for: display, drawsDot: !pulses)
         button.setAccessibilityLabel(display.accessibilityLabel)
         updatePulse(pulses ? display : nil, in: button)
     }
@@ -215,7 +217,6 @@ final class StatusItemController: NSObject, NSPopoverDelegate {
     }
 
     private func togglePopover() {
-        guard let button = statusItem.button else { return }
         if popover.isShown {
             popover.performClose(nil)
             return
@@ -223,11 +224,26 @@ final class StatusItemController: NSObject, NSPopoverDelegate {
         if let popoverClosedAt, Date.now.timeIntervalSince(popoverClosedAt) < 0.3 {
             return
         }
+        showPopover()
+    }
+
+    /// Opens the popover at the icon, also to show where Claude Ring sits.
+    func showPopover() {
+        guard let button = statusItem.button, !popover.isShown else { return }
         monitor.refreshIfStale()
         // An accessory app must be active, or clicks outside won't close the popover.
         NSApp.activate()
         popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
         button.highlight(true)
+    }
+
+    /// Whether people can see the icon. A full menu bar on a Mac with a notch
+    /// hides items behind it without telling the app; such an item's window
+    /// is not visible on any screen. A heuristic, but errs on the safe side.
+    var isIconVisible: Bool {
+        guard statusItem.isVisible, let window = statusItem.button?.window else { return false }
+        return window.occlusionState.contains(.visible)
+            && NSScreen.screens.contains { $0.frame.contains(window.frame) }
     }
 
     func popoverDidClose(_ notification: Notification) {
@@ -248,6 +264,9 @@ final class StatusItemController: NSObject, NSPopoverDelegate {
         let updates = NSMenuItem(title: String(localized: "Nach Updates suchen …"), action: #selector(showUpdates), keyEquivalent: "")
         updates.target = self
         menu.addItem(updates)
+        let welcome = NSMenuItem(title: String(localized: "Einrichtung …"), action: #selector(showWelcome), keyEquivalent: "")
+        welcome.target = self
+        menu.addItem(welcome)
         menu.addItem(.separator())
         menu.addItem(NSMenuItem(title: String(localized: "Claude Ring beenden"), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
 
@@ -266,6 +285,10 @@ final class StatusItemController: NSObject, NSPopoverDelegate {
 
     @objc private func showUpdates() {
         checkForUpdates()
+    }
+
+    @objc private func showWelcome() {
+        openWelcome()
     }
 
     private func openSettingsFromPopover() {

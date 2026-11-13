@@ -17,6 +17,8 @@
 
 # Claude Ring
 
+[English](README.en.md)
+
 Eine macOS-Menüleisten-App (macOS 26 oder neuer), die zeigt, wie viel vom Claude-Nutzungslimit
 noch übrig ist und ob Claude Code gerade arbeitet.
 
@@ -26,45 +28,55 @@ noch übrig ist und ob Claude Code gerade arbeitet.
 ## Installieren
 
 [**ClaudeRing.dmg herunterladen**](https://github.com/antonsiekmann/Claude-Ring/releases/latest/download/ClaudeRing.dmg)
-(neueste Version, Apple Silicon und Intel), öffnen und „Claude Ring“ auf „Programme“ ziehen.
-Ältere Versionen und Änderungen stehen unter [Releases](https://github.com/antonsiekmann/Claude-Ring/releases).
+(neueste Version, Apple Silicon und Intel), öffnen und „Claude Ring“ auf „Programme“ ziehen; das
+Fenster des Disk-Images zeigt mit einem Pfeil, wohin. Ältere Versionen und Änderungen stehen unter [Releases](https://github.com/antonsiekmann/Claude-Ring/releases).
 
 Voraussetzungen: macOS 26 oder neuer, Claude Code installiert und angemeldet (einmal `claude` im
 Terminal starten).
 
-Die App ist nur ad-hoc signiert, nicht bei Apple notarisiert. Beim ersten Öffnen meldet macOS deshalb,
-dass Apple sie nicht überprüfen kann. Freigeben unter **Systemeinstellungen ▸ Datenschutz &
-Sicherheit ▸ Dennoch öffnen** oder im Terminal mit
+Die App ist nur ad-hoc signiert, nicht bei Apple notarisiert. Beim ersten Öffnen blockiert macOS sie
+deshalb einmal: die Meldung mit „Fertig“ schließen, dann **Systemeinstellungen ▸ Datenschutz &
+Sicherheit ▸ Dennoch öffnen** und bestätigen. Alternativ im Terminal:
 `xattr -dr com.apple.quarantine "/Applications/Claude Ring.app"`.
+
+Danach öffnet sich ein **Willkommensfenster**. Es prüft, ob Claude Code angemeldet ist, und erkennt
+eine Anmeldung im Terminal von selbst. Statuspunkt und Anmeldeobjekt richtet es mit einem Klick ein, und
+zum Schluss zeigt es, wo das Symbol in der Menüleiste sitzt. Wurde die App direkt im Disk-Image
+geöffnet, bietet es an, sie nach „Programme“ zu verschieben. Später erreichbar über
+**Rechtsklick ▸ Einrichtung …** oder **Einstellungen ▸ Allgemein**. Wer die App schon vor dem
+Willkommensfenster benutzt hat, bekommt es nach dem Update nicht zu sehen.
 
 ## Was sie zeigt
 
 - **Menüleiste:** ein Ring mit dem verbleibenden Anteil der aktuellen 5-Stunden-Sitzung, daneben die
-  Zahl, z. B. `◔ 87 %`. Nur der Ring wechselt die Farbe (grün, unter 30 % orange, unter 10 % rot),
-  die Zahl bleibt in der normalen Textfarbe. In der Mitte des Rings sitzt ein **Statuspunkt** für
+  Zahl, z. B. `◔ 87 %`. Nur der Ring wechselt die Farbe: grün, ab der Warnschwelle orange, ab der
+  kritischen Schwelle rot (Standard 80 und 95 % genutzt, einstellbar unter Mitteilungen; dieselben
+  Schwellen lösen die Mitteilungen aus). Die Zahl bleibt in der normalen Textfarbe. In der Mitte des Rings sitzt ein **Statuspunkt** für
   Claude Code (bei den Stilen „Zwei Balken“ und „Nur Zahlen“ rechts daneben):
-  - rot, pulsierend: Claude Code arbeitet (ruhig bei „Bewegung reduzieren“ und im Stromsparmodus; die
-    Animation läuft im WindowServer und kostet die App keine Rechenzeit)
-  - hellblau: Claude Code wartet auf eine Antwort (Rückfrage oder Berechtigung)
-  - grün: frei
+  - violett, voll und pulsierend: Claude Code arbeitet (ruhig bei „Bewegung reduzieren“ und im
+    Stromsparmodus; die Animation läuft im WindowServer und kostet die App keine Rechenzeit)
+  - hellblau, halb gefüllt: Claude Code wartet auf eine Antwort (Rückfrage oder Berechtigung)
+  - grün, als Ring: frei
   - kein Punkt: gerade läuft keine Claude-Code-Sitzung
 
-  Bei mehreren Sitzungen gilt Hellblau vor Rot vor Grün.
+  Jeder Zustand hat eine eigene Form, damit er auch ohne Farbe lesbar ist; Rot bleibt dem fast
+  aufgebrauchten Limit vorbehalten. Bei mehreren Sitzungen gilt Hellblau vor Violett vor Grün.
 - **Popover (Linksklick):** großer Ring für die Sitzung mit Reset-Countdown, Karten für die
   Wochenlimits (alle Modelle und modellspezifisch), Wochennutzung nach Bereich und die laufenden
   Claude-Code-Sitzungen mit Projektordner und Zustand. Sitzungen, die Claude Code im Hintergrund
   ausführt (Agentenübersicht, `claude --bg`), tragen den Hinweis „Hintergrund“.
-- **Menü (Rechtsklick):** Einstellungen …, Jetzt aktualisieren, Nach Updates suchen …, Beenden.
+- **Menü (Rechtsklick):** Einstellungen …, Jetzt aktualisieren, Nach Updates suchen …, Einrichtung …,
+  Beenden.
 
 ## Einstellungen
 
 | Tab | Inhalt |
 |---|---|
-| Allgemein | Bei der Anmeldung öffnen, Abrufintervall (1 bis 10 Min., Standard 5 Min.), Updates, vollständig entfernen |
+| Allgemein | Bei der Anmeldung öffnen, Willkommensfenster, Abrufintervall (1 bis 10 Min., Standard 5 Min.), Updates, vollständig entfernen |
 | Menüleiste | Stil (Ring und Zahl, zwei Balken, nur Zahlen), Limit, übrig/genutzt, Farben, Statuspunkt, Live-Vorschau |
 | Popover | Abschnitte ein- und ausblenden |
-| Mitteilungen | Warnung und kritische Schwelle, Wochenlimit, Meldung nach Sitzungs-Reset, neue Version |
-| Claude Code | Statusanzeige einrichten oder entfernen, Token-Status |
+| Mitteilungen | Warn- und kritische Schwelle (färben auch Ring und Balken), Wochenlimit, Meldung nach Sitzungs-Reset, neue Version |
+| Claude Code | Statusanzeige einrichten oder entfernen, Token-Status (Einrichten geht auch direkt im Tab Menüleiste und im Popover) |
 
 ## Woher kommen die Daten?
 
@@ -87,10 +99,13 @@ es nie; das übernimmt Claude Code. Läuft es ab, genügt ein Start von `claude`
 
 ## Claude-Code-Status
 
-Den Statuspunkt einrichten: **Einstellungen ▸ Claude Code ▸ Einrichten.** Die App
+Den Statuspunkt einrichten: im Willkommensfenster oder unter **Einstellungen ▸ Claude Code ▸
+Einrichten.** Die App
 
 1. legt `~/Library/Application Support/ClaudeRing/claude-ring-hook.sh` an,
-2. sichert `~/.claude/settings.json` nach `…/ClaudeRing/Backups/`,
+2. sichert `~/.claude/settings.json` vor der ersten Änderung einmal nach
+   `…/ClaudeRing/Backups/settings-original.json`; diese eine Sicherung wird nie überschrieben, auch
+   nicht beim erneuten Entfernen und Einrichten,
 3. trägt das Skript als Hook für einige Ereignisse ein. Reihenfolge und Format der Datei sowie alle
    anderen Hooks bleiben unverändert.
 
@@ -145,7 +160,7 @@ würde also ebenfalls angeboten.
 wieder heraus, was die App angelegt hat, und beendet sie:
 
 - die Hook-Einträge in `~/.claude/settings.json` (alles andere darin bleibt unverändert)
-- `~/Library/Application Support/ClaudeRing` (Hook-Skript, Sitzungsdaten, Sicherungen)
+- `~/Library/Application Support/ClaudeRing` (Hook-Skript, Sitzungsdaten, Sicherung)
 - die Einstellungen (`~/Library/Preferences/eu.siekmann.ClaudeRing.plist`)
 - das Anmeldeobjekt, zugestellte Mitteilungen
 - Caches, HTTP-Speicher und gespeicherte Fensterzustände
@@ -162,12 +177,22 @@ und Einträge im System-Log (die verfallen von selbst).
 ## Ressourcen
 
 - Abruf im eingestellten Intervall mit Timer-Toleranz. Nach Fehlern wird seltener abgerufen (bis
-  15 Min.), `Retry-After` wird respektiert.
+  15 Min.), `Retry-After` wird respektiert, auch nach dem Aufwachen und beim Ändern des Intervalls.
+- Fehlt die Claude-Code-Anmeldung oder ist das Token abgelaufen, wartet die App nicht ab: Sie prüft
+  alle 30 Sekunden und beim Öffnen des Popovers nur den Schlüsselbund (ohne Anfrage an Anthropic) und
+  ruft ab, sobald die Anmeldung wieder da ist. Ein schon abgelaufenes Token schickt sie gar nicht erst.
+- Nach dem Aufwachen wartet eine Anfrage bis zu einer Minute auf das Netz; ohne Verbindung versucht
+  die App es nach einer Minute erneut, ohne das als Fehler zu werten.
+- Läuft ein Zeitfenster ab (etwa die 5-Stunden-Sitzung), zeigt die App es sofort als zurückgesetzt,
+  auch wenn der nächste Abruf noch auf sich warten lässt.
 - Pause im Ruhezustand, bei ausgeschaltetem Bildschirm, gesperrtem Bildschirm und Benutzerwechsel.
 - Beim Öffnen des Popovers wird nur abgerufen, wenn die Daten älter als 2 Minuten sind.
 - Anthropic begrenzt `/api/oauth/usage` sehr streng und antwortet teils lange mit HTTP 429. Dann
   wartet die App erst 5 Minuten, bei weiteren 429 bis zu 30 Minuten, und zeigt so lange den zuletzt
-  abgerufenen Stand. Der wird gespeichert (nur Prozente und Zeiten) und gleich nach dem Start angezeigt.
+  abgerufenen Stand mit einem ruhigen Hinweis im Popover. Ein „!“ in der Menüleiste und die orange
+  Karte erscheinen erst, wenn die Daten älter als 15 Minuten (oder drei Intervalle) sind oder du etwas
+  tun kannst, etwa dich anmelden. Der Stand wird gespeichert (nur Prozente und Zeiten) und gleich nach
+  dem Start angezeigt.
 - Der Claude-Code-Status kommt über Dateisystem-Ereignisse, ohne Abfrageschleife.
 - Die Suche nach Updates ist eine kleine Anfrage an GitHub pro Tag (und eine nach dem Start).
 - Die Menüleiste wird nur neu gezeichnet, wenn sich etwas Sichtbares ändert.
@@ -177,6 +202,10 @@ und Einträge im System-Log (die verfallen von selbst).
 `ClaudeRing.xcodeproj` in Xcode öffnen und mit ⌘R starten. Die App ist ohne Sandbox ad-hoc signiert
 („Sign to Run Locally“). Unter *Signing & Capabilities* lässt sich ein eigenes Team eintragen.
 
+Texte: Quelle ist Deutsch, die englische Übersetzung steht in `ClaudeRing/Localizable.xcstrings`
+(dazu `ClaudeRing-InfoPlist.xcstrings`). Neue Texte trägt Xcode beim Bauen in den Katalog ein; die
+Übersetzung dort ergänzen. Ein Test schlägt fehl, solange ein Eintrag ohne englischen Text ist.
+
 Tests: ⌘U in Xcode oder
 
 ```
@@ -184,18 +213,25 @@ xcodebuild -project ClaudeRing.xcodeproj -scheme ClaudeRing -destination 'platfo
 ```
 
 Mit `TEST_RUNNER_SNAPSHOT_DIR=<ordner>` vor dem Befehl rendern die Snapshot-Tests Menüleiste,
-Popover und Einstellungen als PNG, jeweils hell und dunkel. `TEST_RUNNER_UPDATE_E2E=1` lädt
+Popover, Einstellungen und Willkommensfenster als PNG, jeweils hell und dunkel. `TEST_RUNNER_UPDATE_E2E=1` lädt
 zusätzlich das neueste Release von GitHub und installiert es testweise über eine Platzhalter-App in
 einem temporären Ordner.
 
 | Skript | Zweck |
 |---|---|
 | `scripts/install.sh` | Release-Version bauen und nach `/Applications/Claude Ring.app` installieren. Nur eine installierte Kopie kann bei der Anmeldung starten. |
-| `scripts/make-dmg.sh` | Universal-Version bauen und `build/dist/ClaudeRing-<Version>.dmg` anlegen: die App, eine Verknüpfung zu „Programme“ und eine kurze Anleitung |
+| `scripts/make-dmg.sh` | Universal-Version bauen und `build/dist/ClaudeRing-<Version>.dmg` anlegen: die App, eine Verknüpfung zu „Programme“ und ein Hintergrundbild mit den Schritten für den ersten Start. Prüft das DMG danach mit denselben Optionen wie die Updatefunktion. Braucht python3 ab 3.10 und beim ersten Lauf Netz für dmgbuild (gepinnt mit Prüfsummen in `scripts/dmg-requirements.txt`, venv unter `build/venv`). |
+| `scripts/render-dmg-background.swift`, `scripts/dmg-settings.py` | Hintergrundbild (Text, Pfeil) und Fenster des DMG mit den Icon-Positionen; beide Dateien müssen zueinander passen |
+
+Das Willkommensfenster lässt sich ohne Änderung der Einstellungen erneut zeigen:
+`open -a "/Applications/Claude Ring.app" --args -completedWelcomeVersion 0` (die App vorher beenden).
 
 ## Releases
 
-Ein Release ist ein Git-Tag der Form `vMAJOR.MINOR.PATCH`:
+Vor dem Tag einen Abschnitt `## MAJOR.MINOR.PATCH` in `CHANGELOG.md` anlegen: Er wird der Text der
+Release-Seite, auf die „Was ist neu?“ in der App führt. Fehlt er, bricht der Release-Job ab
+(`scripts/release-notes.sh` zeigt vorab, was übernommen würde). Ein Release ist ein Git-Tag der Form
+`vMAJOR.MINOR.PATCH`:
 
 ```
 git tag v1.1.0
@@ -203,7 +239,7 @@ git push origin v1.1.0
 ```
 
 Den Rest erledigt GitHub Actions (`.github/workflows/build.yml`): Tests, Universal-Build, DMG und
-die Release-Seite mit automatisch erzeugten Änderungsnotizen. Die Version kommt aus dem Tag, die
+die Release-Seite mit dem Abschnitt aus `CHANGELOG.md`. Die Version kommt aus dem Tag, die
 Build-Nummer aus der Laufnummer, im Projekt muss sich dafür nichts ändern. Installierte Apps finden
 das neue Release spätestens nach einem Tag; die Updatefunktion braucht dafür die Datei
 `ClaudeRing.dmg` im Release, das Tag-Format `vMAJOR.MINOR.PATCH` und eine höhere Versionsnummer. Jeder Push auf `main` und
@@ -221,7 +257,7 @@ ebenfalls unter der GPL-3.0 offenlegen.
 
 ```
 ClaudeRing/
-├── App/            Einstieg (AppKit), Status-Item, Popover, Einstellungsfenster, Hauptmenü, Login-Item
+├── App/            Einstieg (AppKit), Status-Item, Popover, Einstellungs- und Willkommensfenster, Hauptmenü, Login-Item
 ├── Model/          API-Modelle, Snapshot, Einstellungen
 ├── Usage/          Token (CredentialProvider), API-Client, Abrufplanung, Ruhezustand/Sperre
 ├── ClaudeCode/     Hook-Skript, settings.json-Editor, Installer, Sitzungen und ihre Zustände
@@ -230,6 +266,6 @@ ClaudeRing/
 ├── Views/          Menüleisten-Renderer, Popover, Einstellungs-Tabs
 └── AppIcon.icon    App-Icon im Icon-Composer-Format (Liquid Glass)
 ClaudeRingTests/            Swift-Testing-Tests und Snapshot-Tests
-scripts/                    install.sh und make-dmg.sh
+scripts/                    install.sh, make-dmg.sh und die Gestaltung des DMG
 .github/workflows/          Tests und Releases auf GitHub
 ```

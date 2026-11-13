@@ -213,12 +213,9 @@ struct UpdateInstallerTests {
 
 @MainActor
 struct AppUpdaterTests {
-    private func makeDefaults() -> UserDefaults {
-        let name = "AppUpdaterTests-\(UUID())"
-        let defaults = UserDefaults(suiteName: name)!
-        defaults.removePersistentDomain(forName: name)
-        return defaults
-    }
+    private let store = TestDefaults()
+
+    private func makeDefaults() -> UserDefaults { store.defaults }
 
     private let release = AppRelease(
         version: AppVersion("1.1.0")!,

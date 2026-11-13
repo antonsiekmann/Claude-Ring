@@ -40,22 +40,22 @@ struct MenuBarDisplayTests {
 
     @Test func `Shows the used share but keeps the level of the remaining share`() throws {
         let display = MenuBarDisplay.make(
-            snapshot: try snapshot(sessionUsed: 92, weeklyUsed: 10), hasError: false,
+            snapshot: try snapshot(sessionUsed: 96, weeklyUsed: 10), hasError: false,
             preferences: preferences(value: .used), activity: nil, locale: german
         )
 
-        #expect(display.text == "92\u{00A0}%")
-        #expect(display.graphic == .ring(.init(fraction: 0.92, level: .critical)))
+        #expect(display.text == "96\u{00A0}%")
+        #expect(display.graphic == .ring(.init(fraction: 0.96, level: .critical)))
     }
 
     @Test func `Can follow the weekly limit instead`() throws {
         let display = MenuBarDisplay.make(
-            snapshot: try snapshot(sessionUsed: 13, weeklyUsed: 75), hasError: false,
+            snapshot: try snapshot(sessionUsed: 13, weeklyUsed: 85), hasError: false,
             preferences: preferences(limit: .weekly), activity: nil, locale: german
         )
 
-        #expect(display.text == "25\u{00A0}%")
-        #expect(display.graphic == .ring(.init(fraction: 0.25, level: .warning)))
+        #expect(display.text == "15\u{00A0}%")
+        #expect(display.graphic == .ring(.init(fraction: 0.15, level: .warning)))
     }
 
     @Test func `Shows both windows as bars`() throws {
@@ -124,10 +124,16 @@ struct MenuBarDisplayTests {
 
 struct UsageLevelTests {
     @Test(arguments: [
-        (0.0, UsageLevel.critical), (9.9, .critical), (10, .warning), (29.9, .warning), (30, .normal), (100, .normal),
+        (0.0, UsageLevel.normal), (79.4, .normal), (79.5, .warning), (94, .warning), (95, .critical), (100, .critical),
     ])
-    func `Maps the remaining share to a level`(remaining: Double, expected: UsageLevel) {
-        #expect(UsageLevel(remainingPercent: remaining) == expected)
+    func `Switches at the same thresholds as the notifications`(used: Double, expected: UsageLevel) {
+        #expect(UsageLevel(usedPercent: used, thresholds: .standard) == expected)
+    }
+
+    @Test func `Follows thresholds set in the settings`() {
+        let early = UsageThresholds(warning: 60, critical: 85)
+        #expect(UsageLevel(usedPercent: 65, thresholds: early) == .warning)
+        #expect(UsageLevel(usedPercent: 65, thresholds: .standard) == .normal)
     }
 }
 
@@ -150,13 +156,13 @@ struct MenuBarIconRendererTests {
     }
 
     @Test func `Fits the menu bar height`() throws {
-        let image = MenuBarIconRenderer.image(for: try display(.ring, activity: .working), differentiateWithoutColor: false)
+        let image = MenuBarIconRenderer.image(for: try display(.ring, activity: .working))
         #expect(image.size.height == 18)
     }
 
     @Test func `Puts the dot inside the ring without taking space`() throws {
-        let ring = MenuBarIconRenderer.image(for: try display(.ring, activity: nil), differentiateWithoutColor: false)
-        let ringWithDot = MenuBarIconRenderer.image(for: try display(.ring, activity: .idle), differentiateWithoutColor: false)
+        let ring = MenuBarIconRenderer.image(for: try display(.ring, activity: nil))
+        let ringWithDot = MenuBarIconRenderer.image(for: try display(.ring, activity: .idle))
 
         #expect(ringWithDot.size.width == ring.size.width)
     }
@@ -186,12 +192,13 @@ struct MenuBarIconRendererTests {
         let rect = try #require(MenuBarIconRenderer.dotRect(for: display))
         let center = NSPoint(x: rect.midX, y: rect.midY)
 
-        let drawn = try color(of: MenuBarIconRenderer.image(for: display, differentiateWithoutColor: false), at: center)
+        let drawn = try color(of: MenuBarIconRenderer.image(for: display), at: center)
         let left = try color(
-            of: MenuBarIconRenderer.image(for: display, differentiateWithoutColor: false, drawsDot: false), at: center
+            of: MenuBarIconRenderer.image(for: display, drawsDot: false), at: center
         )
 
-        #expect(drawn.redComponent > 0.8 && drawn.greenComponent < 0.4 && drawn.alphaComponent > 0.9)
+        // Working is purple, not red: red stays reserved for a nearly used-up limit.
+        #expect(drawn.blueComponent > drawn.greenComponent + 0.2 && drawn.redComponent > drawn.greenComponent && drawn.alphaComponent > 0.9)
         #expect(left.alphaComponent < 0.1)
     }
 
@@ -201,8 +208,8 @@ struct MenuBarIconRendererTests {
 
     @Test func `Puts the dot next to bars and numbers`() throws {
         for style in [MenuBarStyle.bars, .numbers] {
-            let plain = MenuBarIconRenderer.image(for: try display(style, activity: nil), differentiateWithoutColor: false)
-            let withDot = MenuBarIconRenderer.image(for: try display(style, activity: .working), differentiateWithoutColor: false)
+            let plain = MenuBarIconRenderer.image(for: try display(style, activity: nil))
+            let withDot = MenuBarIconRenderer.image(for: try display(style, activity: .working))
             #expect(withDot.size.width > plain.size.width)
         }
     }
@@ -218,22 +225,22 @@ struct MenuBarSnapshotTests {
     @Test(.enabled(if: directory != nil))
     func `Render menu bar states`() throws {
         let directory = try #require(Self.directory)
-        let cases: [(String, MenuBarStyle, Double, Double, ClaudeActivity?, Bool, Bool)] = [
-            ("ring-normal-working", .ring, 13, 64, .working, true, false),
-            ("ring-warning-waiting", .ring, 78, 64, .waiting, true, false),
-            ("ring-critical-idle", .ring, 95, 64, .idle, true, false),
-            ("ring-mono-nodot", .ring, 13, 64, nil, false, false),
-            ("ring-dwc-waiting", .ring, 13, 64, .waiting, true, true),
-            ("bars-working", .bars, 40, 85, .working, true, false),
-            ("numbers-idle", .numbers, 13, 64, .idle, true, false),
+        let cases: [(String, MenuBarStyle, Double, Double, ClaudeActivity?, Bool)] = [
+            ("ring-normal-working", .ring, 13, 64, .working, true),
+            ("ring-warning-waiting", .ring, 85, 64, .waiting, true),
+            ("ring-critical-idle", .ring, 95, 64, .idle, true),
+            ("ring-mono-nodot", .ring, 13, 64, nil, false),
+            ("ring-normal-waiting", .ring, 13, 64, .waiting, true),
+            ("bars-working", .bars, 40, 85, .working, true),
+            ("numbers-idle", .numbers, 13, 64, .idle, true),
         ]
         var rows: [NSImage] = []
-        for (name, style, sessionUsed, weeklyUsed, activity, colors, dwc) in cases {
+        for (name, style, sessionUsed, weeklyUsed, activity, colors) in cases {
             let display = MenuBarDisplay.make(
                 snapshot: try snapshot(sessionUsed: sessionUsed, weeklyUsed: weeklyUsed), hasError: false,
                 preferences: preferences(style: style, colorsRing: colors), activity: activity, locale: german
             )
-            let image = MenuBarIconRenderer.image(for: display, differentiateWithoutColor: dwc)
+            let image = MenuBarIconRenderer.image(for: display)
             for appearance in [NSAppearance.Name.aqua, .darkAqua] {
                 rows.append(Self.render(image, appearance: appearance))
             }
