@@ -239,13 +239,18 @@ struct PreferencesCleanupTests {
         return url
     }
 
+    /// On a busy machine (the CI runner has few cores, and tests that block a
+    /// thread run alongside) this test can resume seconds late. So the cleanup
+    /// gets the app's full 30 seconds instead of a short window the file could
+    /// miss, and the wait is measured by the clock.
     @Test func `Removes an empty preferences file that appears later`() async throws {
         let url = folder.url.appending(path: "prefs-\(UUID()).plist")
-        AppUninstaller.launchPreferencesCleanup(for: url, seconds: 4)
+        AppUninstaller.launchPreferencesCleanup(for: url)
         try await Task.sleep(for: .milliseconds(500))
         try PropertyListSerialization.data(fromPropertyList: [String: Any](), format: .binary, options: 0).write(to: url)
 
-        for _ in 0..<50 where FileManager.default.fileExists(atPath: url.path) {
+        let deadline = ContinuousClock.now + .seconds(30)
+        while FileManager.default.fileExists(atPath: url.path), ContinuousClock.now < deadline {
             try await Task.sleep(for: .milliseconds(100))
         }
         #expect(!FileManager.default.fileExists(atPath: url.path))
