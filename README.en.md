@@ -54,6 +54,10 @@ Applications. Open it again any time via **right-click ▸ Setup…** or **Setti
 
   Every state has its own shape, so it reads without color too. With several sessions, yellow wins
   over coral over green.
+- **Notification when Claude Code is waiting:** when a session has been waiting 10 seconds for an
+  answer or approval, a notification names its project folder. It leaves Notification Center as soon
+  as the session continues. Clicking it brings the session's terminal or editor to the front (for
+  background sessions it opens the popover). Can be turned off under Notifications ▸ Claude Code.
 - **Popover (click):** a large ring for the session with a reset countdown, cards for the weekly limits,
   weekly usage by area and the running Claude Code sessions.
 - **Menu (right-click):** Settings…, Refresh Now, Check for Updates…, Setup…, Quit.

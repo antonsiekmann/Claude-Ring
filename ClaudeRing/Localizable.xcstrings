@@ -1,6 +1,36 @@
 {
   "sourceLanguage" : "de",
   "strings" : {
+    "Claude Code wartet auf dich" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude Code is waiting for you"
+          }
+        }
+      }
+    },
+    "Kommt, wenn eine Sitzung 10 Sekunden lang auf eine Antwort oder Freigabe wartet, und verschwindet, sobald sie weiterläuft. Ein Klick holt das Terminal nach vorn. Braucht die Statusanzeige unter Claude Code." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrives when a session has been waiting 10 seconds for an answer or approval, and disappears as soon as it continues. Clicking it brings the terminal to the front. Needs the status display under Claude Code."
+          }
+        }
+      }
+    },
+    "Melden, wenn Claude Code auf dich wartet" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notify when Claude Code is waiting for you"
+          }
+        }
+      }
+    },
     "„~/.claude/settings.json“ ist kein gültiges JSON. Die App ändert die Datei deshalb nicht." : {
       "localizations" : {
         "en" : {
@@ -2351,6 +2381,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Two bars"
+          }
+        }
+      }
+    },
+    "„%@“ braucht deine Antwort oder Freigabe." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” needs your answer or approval."
           }
         }
       }

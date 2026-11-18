@@ -3,14 +3,17 @@ import Observation
 @preconcurrency import UserNotifications
 
 /// Sends a notification when a usage window crosses the warning or critical
-/// threshold, optionally when a nearly used up session has been reset, and
-/// once per new version of the app.
+/// threshold, optionally when a nearly used up session has been reset, when a
+/// Claude Code session waits for an answer, and once per new version of the app.
 @MainActor
 @Observable
 final class UsageNotifier: NSObject, UNUserNotificationCenterDelegate {
     private(set) var authorization: UNAuthorizationStatus = .notDetermined
     /// Called when the user clicks the update notification.
     @ObservationIgnored var openUpdate: () -> Void = {}
+    /// Called when the user clicks the notification of a waiting session that
+    /// runs in no app, such as a background session.
+    @ObservationIgnored var showSessions: () -> Void = {}
 
     @ObservationIgnored private let settings: AppSettings
     @ObservationIgnored private let defaults: UserDefaults
@@ -18,19 +21,29 @@ final class UsageNotifier: NSObject, UNUserNotificationCenterDelegate {
     @ObservationIgnored private var isRecheckingAuthorization = false
     @ObservationIgnored private var activationObserver: NSObjectProtocol?
     @ObservationIgnored private var center: UNUserNotificationCenter { .current() }
+    @ObservationIgnored private let waitingDelay: Duration
+    @ObservationIgnored private var waitingTracker = WaitingAlertTracker()
+    @ObservationIgnored private var pendingWaitingAlerts: [String: Task<Void, Never>] = [:]
     private static let stateKey = "thresholdStates"
     private static let announcedVersionKey = "announcedUpdateVersion"
     nonisolated private static let updateNotificationID = "update"
+    nonisolated private static let waitingPrefix = "waiting-"
+    nonisolated private static let pidKey = "pid"
 
+    /// - Parameter waitingDelay: How long a session waits before its
+    ///   notification goes out; an answer given right away at the terminal
+    ///   needs none. The footer in the settings names this time.
     init(
         settings: AppSettings,
         defaults: UserDefaults = .standard,
+        waitingDelay: Duration = .seconds(10),
         authorizationStatus: @escaping @Sendable () async -> UNAuthorizationStatus = {
             await UNUserNotificationCenter.current().notificationSettings().authorizationStatus
         }
     ) {
         self.settings = settings
         self.defaults = defaults
+        self.waitingDelay = waitingDelay
         self.authorizationStatus = authorizationStatus
         super.init()
     }
@@ -124,6 +137,42 @@ final class UsageNotifier: NSObject, UNUserNotificationCenterDelegate {
         saveStates(states)
     }
 
+    /// Call with every change of the Claude Code sessions. A session that
+    /// still waits after `waitingDelay` gets a notification; it disappears
+    /// from the Notification Center as soon as the wait is over.
+    func sessionsChanged(_ sessions: [ClaudeSession]) {
+        let changes = waitingTracker.update(sessions)
+        for id in changes.ended {
+            pendingWaitingAlerts.removeValue(forKey: id)?.cancel()
+            center.removeDeliveredNotifications(withIdentifiers: [Self.waitingPrefix + id])
+        }
+        guard settings.notificationsEnabled, settings.notifiesWhenWaiting else { return }
+        for session in changes.started {
+            let delay = waitingDelay - .seconds(Date.now.timeIntervalSince(session.since))
+            pendingWaitingAlerts[session.id] = Task { [weak self] in
+                if delay > .zero { try? await Task.sleep(for: delay) }
+                guard !Task.isCancelled else { return }
+                self?.pendingWaitingAlerts[session.id] = nil
+                self?.announceWaiting(session)
+            }
+        }
+    }
+
+    private func announceWaiting(_ session: ClaudeSession) {
+        guard settings.notificationsEnabled, settings.notifiesWhenWaiting,
+              waitingTracker.isWaiting(session)
+        else { return }
+        guard isAuthorized else {
+            recheckAuthorization { [weak self] in self?.announceWaiting(session) }
+            return
+        }
+        post(id: Self.waitingPrefix + session.id,
+             title: String(localized: "Claude Code wartet auf dich"),
+             body: String(localized: "„\(session.projectName)“ braucht deine Antwort oder Freigabe."),
+             userInfo: [Self.pidKey: Int(session.pid)],
+             threadIdentifier: "waiting")
+    }
+
     /// Once that version or a newer one runs, its announcement goes from the
     /// Notification Center.
     func removeAnnouncement(ifInstalled currentVersion: AppVersion?) {
@@ -176,10 +225,15 @@ final class UsageNotifier: NSObject, UNUserNotificationCenterDelegate {
         }
     }
 
-    private func post(id: String, title: String, body: String) {
+    private func post(
+        id: String, title: String, body: String,
+        userInfo: [String: Any] = [:], threadIdentifier: String = ""
+    ) {
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = body
+        content.userInfo = userInfo
+        content.threadIdentifier = threadIdentifier
         content.sound = .default
         center.add(UNNotificationRequest(identifier: id, content: content, trigger: nil))
     }
@@ -206,11 +260,27 @@ final class UsageNotifier: NSObject, UNUserNotificationCenterDelegate {
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse
     ) async {
-        guard response.notification.request.identifier == Self.updateNotificationID else { return }
-        await showUpdate()
+        guard response.actionIdentifier == UNNotificationDefaultActionIdentifier else { return }
+        let request = response.notification.request
+        if request.identifier == Self.updateNotificationID {
+            await showUpdate()
+        } else if request.identifier.hasPrefix(Self.waitingPrefix) {
+            let pid = request.content.userInfo[Self.pidKey] as? Int
+            await showWaitingSession(pid: pid.map(pid_t.init))
+        }
     }
 
     private func showUpdate() {
         openUpdate()
+    }
+
+    /// Brings the terminal or editor of the session to the front.
+    private func showWaitingSession(pid: pid_t?) {
+        guard let pid, let app = HostApp.of(pid: pid) else {
+            showSessions()
+            return
+        }
+        NSApp.yieldActivation(to: app)
+        app.activate()
     }
 }

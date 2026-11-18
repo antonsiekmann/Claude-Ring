@@ -19,6 +19,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var notificationTask: Task<Void, Never>?
     private var hookStatusTask: Task<Void, Never>?
     private var updateNotificationTask: Task<Void, Never>?
+    private var sessionNotificationTask: Task<Void, Never>?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         guard !AppEnvironment.isRunningTests else { return }
@@ -44,7 +45,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         updater.start()
         observeSnapshotsForNotifications()
         observeUpdatesForNotifications()
+        observeSessionsForNotifications()
         notifier.openUpdate = { [weak self] in self?.openSettings(tab: .general) }
+        notifier.showSessions = { [weak self] in self?.statusItemController?.showPopover() }
 
         let monitor = monitor
         sessions.onRateLimited = { monitor.refreshUnlessBackingOff() }
@@ -80,6 +83,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         notificationTask?.cancel()
         hookStatusTask?.cancel()
         updateNotificationTask?.cancel()
+        sessionNotificationTask?.cancel()
         monitor.stop()
         updater.stop()
         sessions.stop()
@@ -158,6 +162,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 if let version {
                     notifier.announceUpdate(version)
                 }
+            }
+        }
+    }
+
+    private func observeSessionsForNotifications() {
+        let sessions = sessions
+        let notifier = notifier
+        sessionNotificationTask = Task {
+            for await list in Observations({ sessions.sessions }) {
+                notifier.sessionsChanged(list)
             }
         }
     }

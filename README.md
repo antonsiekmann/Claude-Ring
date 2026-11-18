@@ -61,6 +61,10 @@ Willkommensfenster benutzt hat, bekommt es nach dem Update nicht zu sehen.
 
   Jeder Zustand hat eine eigene Form, damit er auch ohne Farbe lesbar ist; Rot bleibt dem fast
   aufgebrauchten Limit vorbehalten. Bei mehreren Sitzungen gilt Gelb vor Koralle vor Grün.
+- **Mitteilung, wenn Claude Code wartet:** Wartet eine Sitzung 10 Sekunden lang auf eine Antwort oder
+  Freigabe, kommt eine Mitteilung mit dem Projektordner. Sie verschwindet aus der Mitteilungszentrale,
+  sobald die Sitzung weiterläuft. Ein Klick holt das Terminal oder den Editor der Sitzung nach vorn
+  (bei Hintergrundsitzungen öffnet sich das Popover). Abschaltbar unter Mitteilungen ▸ Claude Code.
 - **Popover (Linksklick):** großer Ring für die Sitzung mit Reset-Countdown, Karten für die
   Wochenlimits (alle Modelle und modellspezifisch), Wochennutzung nach Bereich und die laufenden
   Claude-Code-Sitzungen mit Projektordner und Zustand. Sitzungen, die Claude Code im Hintergrund
@@ -75,7 +79,7 @@ Willkommensfenster benutzt hat, bekommt es nach dem Update nicht zu sehen.
 | Allgemein | Bei der Anmeldung öffnen, Willkommensfenster, Abrufintervall (1 bis 10 Min., Standard 5 Min.), Updates, vollständig entfernen |
 | Menüleiste | Stil (Ring und Zahl, zwei Balken, nur Zahlen), Limit, übrig/genutzt, Farben, Statuspunkt, Live-Vorschau |
 | Popover | Abschnitte ein- und ausblenden |
-| Mitteilungen | Warn- und kritische Schwelle (färben auch Ring und Balken), Wochenlimit, Meldung nach Sitzungs-Reset, neue Version |
+| Mitteilungen | Warn- und kritische Schwelle (färben auch Ring und Balken), Wochenlimit, Meldung nach Sitzungs-Reset, wartendes Claude Code, neue Version |
 | Claude Code | Statusanzeige einrichten oder entfernen, Token-Status (Einrichten geht auch direkt im Tab Menüleiste und im Popover) |
 
 ## Woher kommen die Daten?

@@ -127,6 +127,10 @@ final class AppSettings {
     var notifiesAboutUpdates: Bool {
         didSet { defaults.set(notifiesAboutUpdates, forKey: Key.notifiesAboutUpdates) }
     }
+    /// A Claude Code session waits for an answer or an approval.
+    var notifiesWhenWaiting: Bool {
+        didSet { defaults.set(notifiesWhenWaiting, forKey: Key.notifiesWhenWaiting) }
+    }
 
     /// The thresholds for colors and notifications alike.
     var thresholds: UsageThresholds {
@@ -164,6 +168,7 @@ final class AppSettings {
         notifiesForWeekly = defaults.bool(forKey: Key.notifiesForWeekly, default: true)
         notifiesOnSessionReset = defaults.bool(forKey: Key.notifiesOnSessionReset, default: false)
         notifiesAboutUpdates = defaults.bool(forKey: Key.notifiesAboutUpdates, default: true)
+        notifiesWhenWaiting = defaults.bool(forKey: Key.notifiesWhenWaiting, default: true)
         dismissedStatusDotTip = defaults.bool(forKey: Key.dismissedStatusDotTip, default: false)
         // integer(forKey:) also reads "-completedWelcomeVersion 0" from the
         // command line, which arrives as text, to show the window for a test.
@@ -188,6 +193,7 @@ final class AppSettings {
         static let notifiesForWeekly = "notifiesForWeekly"
         static let notifiesOnSessionReset = "notifiesOnSessionReset"
         static let notifiesAboutUpdates = "notifiesAboutUpdates"
+        static let notifiesWhenWaiting = "notifiesWhenWaiting"
         static let completedWelcomeVersion = "completedWelcomeVersion"
         static let dismissedStatusDotTip = "dismissedStatusDotTip"
     }

@@ -4,6 +4,15 @@ Ein Abschnitt pro Version, die neueste oben. Beim Release übernimmt GitHub Acti
 getaggten Version als Text der Release-Seite; „Was ist neu?“ in der App führt dorthin. Ohne Abschnitt
 für die Version bricht der Release-Job ab.
 
+## 1.2.3
+
+### Neu
+
+- Mitteilung, wenn Claude Code auf dich wartet: Wartet eine Sitzung 10 Sekunden lang auf eine Antwort
+  oder Freigabe, meldet Claude Ring das mit dem Projektordner. Die Mitteilung verschwindet, sobald die
+  Sitzung weiterläuft, und ein Klick holt das Terminal oder den Editor der Sitzung nach vorn. An- und
+  abschaltbar unter Einstellungen ▸ Mitteilungen ▸ Claude Code; braucht die Statusanzeige.
+
 ## 1.2.2
 
 ### Geändert

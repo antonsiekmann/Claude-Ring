@@ -49,6 +49,16 @@ struct NotificationSettingsView: View {
             .disabled(!settings.notificationsEnabled)
 
             Section {
+                Toggle("Melden, wenn Claude Code auf dich wartet", isOn: $settings.notifiesWhenWaiting)
+            } header: {
+                Text("Claude Code")
+            } footer: {
+                Text("Kommt, wenn eine Sitzung 10 Sekunden lang auf eine Antwort oder Freigabe wartet, und verschwindet, sobald sie weiterläuft. Ein Klick holt das Terminal nach vorn. Braucht die Statusanzeige unter Claude Code.")
+                    .foregroundStyle(.secondary)
+            }
+            .disabled(!settings.notificationsEnabled)
+
+            Section {
                 Toggle("Melden, wenn eine neue Version verfügbar ist", isOn: $settings.notifiesAboutUpdates)
             } header: {
                 Text("Updates")
