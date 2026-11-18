@@ -2,7 +2,15 @@
 
 Ein Abschnitt pro Version, die neueste oben. Beim Release übernimmt GitHub Actions den Abschnitt der
 getaggten Version als Text der Release-Seite; „Was ist neu?“ in der App führt dorthin. Ohne Abschnitt
-für die Version bricht der Release-Job ab.
+für die Version bricht der Release-Job ab. Die App trägt diese Datei mit und zeigt die Abschnitte nach
+einem Update in einem Fenster; sie versteht `###`-Gruppen, `-`-Punkte und Markdown innerhalb der Zeile.
+
+## 1.2.4
+
+### Neu
+
+- Nach einem Update zeigt ein Fenster, was sich geändert hat. Hast du Versionen übersprungen, stehen
+  deren Änderungen mit darin. Bei einer Neuinstallation bleibt es beim Willkommensfenster.
 
 ## 1.2.3
 

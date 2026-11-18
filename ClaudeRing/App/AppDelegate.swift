@@ -16,6 +16,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItemController: StatusItemController?
     private var settingsWindowController: SettingsWindowController?
     private var welcomeWindowController: WelcomeWindowController?
+    private var whatsNewWindowController: WhatsNewWindowController?
     private var notificationTask: Task<Void, Never>?
     private var hookStatusTask: Task<Void, Never>?
     private var updateNotificationTask: Task<Void, Never>?
@@ -54,13 +55,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         observeHookStatus()
         uninstaller.stopApp = { [weak self] in self?.stopEverything() }
 
-        if WelcomePolicy.shouldShow(
+        let showsWelcome = WelcomePolicy.shouldShow(
             settings: settings,
             loginItemEnabled: launchAtLogin.isEnabled || launchAtLogin.requiresApproval,
             hasUsageData: monitor.snapshot != nil
-        ) {
+        )
+        let update = WhatsNewPolicy.update(settings: settings, current: updater.currentVersion)
+        if showsWelcome {
             showWelcome()
+        } else if let update {
+            showWhatsNew(update)
         }
+    }
+
+    /// After an update: what has changed since the version before.
+    private func showWhatsNew(_ update: WhatsNewPolicy.Update) {
+        let releases = Changelog.bundled.releases(after: update.from, upTo: update.to)
+        guard !releases.isEmpty else { return }
+        whatsNewWindowController = WhatsNewWindowController(version: update.to, previous: update.from, releases: releases)
+        whatsNewWindowController?.show()
     }
 
     /// Opening the running app again from Finder or Spotlight shows a window
@@ -90,6 +103,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusItemController?.remove()
         statusItemController = nil
         welcomeWindowController?.close()
+        whatsNewWindowController?.close()
     }
 
     @objc func showSettings() {

@@ -147,6 +147,11 @@ final class AppSettings {
     var completedWelcomeVersion: Int? {
         didSet { defaults.set(completedWelcomeVersion, forKey: Key.completedWelcomeVersion) }
     }
+    /// The highest app version that has run, to show its changes once after
+    /// an update; nil before 1.2.4.
+    var lastLaunchedVersion: String? {
+        didSet { defaults.set(lastLaunchedVersion, forKey: Key.lastLaunchedVersion) }
+    }
 
     @ObservationIgnored private let defaults: UserDefaults
 
@@ -174,6 +179,7 @@ final class AppSettings {
         // command line, which arrives as text, to show the window for a test.
         completedWelcomeVersion = defaults.object(forKey: Key.completedWelcomeVersion) == nil
             ? nil : defaults.integer(forKey: Key.completedWelcomeVersion)
+        lastLaunchedVersion = defaults.string(forKey: Key.lastLaunchedVersion)
     }
 
     private enum Key {
@@ -195,6 +201,7 @@ final class AppSettings {
         static let notifiesAboutUpdates = "notifiesAboutUpdates"
         static let notifiesWhenWaiting = "notifiesWhenWaiting"
         static let completedWelcomeVersion = "completedWelcomeVersion"
+        static let lastLaunchedVersion = "lastLaunchedVersion"
         static let dismissedStatusDotTip = "dismissedStatusDotTip"
     }
 }

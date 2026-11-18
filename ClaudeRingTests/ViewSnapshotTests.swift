@@ -152,6 +152,21 @@ struct ViewSnapshotTests {
         try Self.write(WelcomeView(model: done, finish: {}, later: {}), name: "welcome-done")
     }
 
+    @Test(.enabled(if: directory != nil))
+    func `Render the window after an update`() throws {
+        let changelog = Changelog.bundled
+        for (name, from, to) in [
+            ("whats-new", "1.2.3", "1.2.4"),
+            ("whats-new-skipped", "1.1.0", "1.2.4"),
+        ] {
+            let releases = changelog.releases(after: AppVersion(from), upTo: AppVersion(to)!)
+            try Self.write(WhatsNewView(
+                version: AppVersion(to)!, previous: AppVersion(from), releases: releases,
+                notesHeight: WhatsNewView.notesHeight(for: releases), close: {}
+            ), name: name)
+        }
+    }
+
     private static let previewRelease = AppRelease(
         version: AppVersion("1.1.0")!,
         pageURL: URL(string: "https://github.com/antonsiekmann/Claude-Ring/releases/tag/v1.1.0")!,

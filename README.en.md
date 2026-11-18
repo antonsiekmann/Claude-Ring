@@ -105,7 +105,9 @@ data about you). If there is a newer version, the popover and the settings show 
 downloaded until you click **Install**. The app checks the download against GitHub's SHA-256 checksum,
 verifies the app inside (bundle ID, version, intact signature, macOS version), replaces itself and
 restarts. Settings, hooks and the login item stay as they are. Only an app in Applications can replace
-itself.
+itself. After the restart, a window shows what has changed, including any versions you skipped; the
+text comes from `CHANGELOG.md` inside the app (in German). A fresh install gets the welcome window
+instead.
 
 ## Remove completely
 

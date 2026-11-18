@@ -1,12 +1,42 @@
 {
   "sourceLanguage" : "de",
   "strings" : {
+    "Alle Versionen auf GitHub" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All versions on GitHub"
+          }
+        }
+      }
+    },
     "Claude Code wartet auf dich" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Claude Code is waiting for you"
+          }
+        }
+      }
+    },
+    "Das Update ist installiert. Das hat sich geändert:" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The update is installed. Here’s what has changed:"
+          }
+        }
+      }
+    },
+    "Das Update ist installiert. Das hat sich seit Version %@ geändert:" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The update is installed. Here’s what has changed since version %@:"
           }
         }
       }
@@ -27,6 +57,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Notify when Claude Code is waiting for you"
+          }
+        }
+      }
+    },
+    "Neu in Claude Ring" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What’s New in Claude Ring"
+          }
+        }
+      }
+    },
+    "Neu in Claude Ring %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What’s New in Claude Ring %@"
+          }
+        }
+      }
+    },
+    "Version %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version %@"
+          }
+        }
+      }
+    },
+    "Weiter" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue"
           }
         }
       }

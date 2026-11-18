@@ -153,6 +153,11 @@ Absturz oder Stromausfall ab, räumt die App die Reste beim nächsten Start weg.
 oder `~/Applications`), in dem du schreiben darfst; sonst öffnet „Herunterladen …“ die Release-Seite.
 „Später“ blendet eine Version im Popover aus, bis eine neuere erscheint.
 
+Nach dem Neustart zeigt ein Fenster, was sich geändert hat, auch nach einem Update von Hand über das
+Disk-Image. Hast du Versionen übersprungen, stehen deren Änderungen mit darin. Der Text kommt aus
+`CHANGELOG.md`, das die App mitbringt, also ohne weitere Abfrage. Nach einer Neuinstallation kommt
+stattdessen das Willkommensfenster.
+
 Vertrauensanker ist GitHub, wie beim Download von Hand: Die App ist nur ad-hoc signiert, ohne
 Entwickler-Zertifikat. Prüfsumme und Signaturprüfung erkennen beschädigte oder unterwegs veränderte
 Dateien, aber nicht, wer das Release gebaut hat. Ein Release aus einem übernommenen GitHub-Konto
@@ -230,11 +235,14 @@ einem temporären Ordner.
 
 Das Willkommensfenster lässt sich ohne Änderung der Einstellungen erneut zeigen:
 `open -a "/Applications/Claude Ring.app" --args -completedWelcomeVersion 0` (die App vorher beenden).
+Genauso das Fenster nach einem Update, mit den Änderungen seit 1.2.3:
+`open -a "/Applications/Claude Ring.app" --args -lastLaunchedVersion 1.2.3`.
 
 ## Releases
 
 Vor dem Tag einen Abschnitt `## MAJOR.MINOR.PATCH` in `CHANGELOG.md` anlegen: Er wird der Text der
-Release-Seite, auf die „Was ist neu?“ in der App führt. Fehlt er, bricht der Release-Job ab
+Release-Seite, auf die „Was ist neu?“ in der App führt, und das Fenster, das die App nach einem
+Update zeigt. Fehlt er, bricht der Release-Job ab
 (`scripts/release-notes.sh` zeigt vorab, was übernommen würde). Ein Release ist ein Git-Tag der Form
 `vMAJOR.MINOR.PATCH`:
 
@@ -262,12 +270,12 @@ ebenfalls unter der GPL-3.0 offenlegen.
 
 ```
 ClaudeRing/
-├── App/            Einstieg (AppKit), Status-Item, Popover, Einstellungs- und Willkommensfenster, Hauptmenü, Login-Item
+├── App/            Einstieg (AppKit), Status-Item, Popover, Einstellungs-, Willkommens- und Was-ist-neu-Fenster, Hauptmenü, Login-Item
 ├── Model/          API-Modelle, Snapshot, Einstellungen
 ├── Usage/          Token (CredentialProvider), API-Client, Abrufplanung, Ruhezustand/Sperre
 ├── ClaudeCode/     Hook-Skript, settings.json-Editor, Installer, Sitzungen und ihre Zustände
 ├── Notifications/  Schwellen-Logik und Mitteilungen
-├── Update/         Release-Abfrage bei GitHub, Download, Prüfung und Austausch der App
+├── Update/         Release-Abfrage bei GitHub, Download, Prüfung und Austausch der App, CHANGELOG-Leser
 ├── Views/          Menüleisten-Renderer, Popover, Einstellungs-Tabs
 └── AppIcon.icon    App-Icon im Icon-Composer-Format (Liquid Glass)
 ClaudeRingTests/            Swift-Testing-Tests und Snapshot-Tests
